@@ -6,8 +6,8 @@ import { StyleSheet, View, Image, TextInput, Button, TouchableOpacity, Text,
 import { NativeRouter, Route, Routes } from "react-router-native";
 
 const Login = ({navigation}) => {
-    const [email, setEmail] = useState("123@gmail.com");
-    const [password, setPassword] = useState("password123");
+    const [email, setEmail] = useState("user1@gmail.com");
+    const [password, setPassword] = useState("user1pass");
     const [data, setData] = useState([]);
 return (
     
@@ -36,6 +36,7 @@ return (
       <TouchableOpacity 
         style={styles.loginBtn}
         onPress={async () => {
+          console.log(data);
           fetch('http://192.168.1.159:5000/login', {
             method: "POST",
             headers: {
@@ -44,16 +45,12 @@ return (
             },
             body: JSON.stringify({
               email: email,
-              passowrd: password
+              password: password
             })
           })
-          .then((response) => {response.json()})
-          .then((json) => setData(json))
+          .then(response => response.json())
+          .then(json => setData(json))
           .catch((error) => console.error(error))
-          console.log(JSON.stringify({
-            email: email,
-            passowrd: password
-          }));
           console.log(data);
           navigation.navigate("GrocyStack");
         }}
