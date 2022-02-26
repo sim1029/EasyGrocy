@@ -5,21 +5,16 @@ import {
     StyleSheet, 
     Text, 
     View, 
-    TextInput,
-    TouchableOpacity,
-} from 'react-native';
-
-// Profile screen
-// Hi name 
-//display current groups
-// join group 
-//name of group
-// sign out button 
+    Button,
+ } from 'react-native';
 const Profile = ({navigation}) => {
     const [squad, setSquad] = useState("");
     return (
         <View style={styles.container}>
             <Text style={styles.grocyText}>Hello, dynamic bitch </Text>
+
+            <Button onPress={() => {navigation.navigate("Login")}} title={"Back"}></Button>
+
             <StatusBar style="auto" />
 
             <Text style = {styles.grocyText}>-----------------------</Text>
