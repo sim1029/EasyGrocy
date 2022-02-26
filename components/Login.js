@@ -3,10 +3,12 @@ import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, Image, TextInput, Button, TouchableOpacity, Text,
 } from "react-native";
+import { NativeRouter, Route, Routes } from "react-router-native";
 
 const Login = ({navigation}) => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("123@gmail.com");
+    const [password, setPassword] = useState("password123");
+    const [data, setData] = useState([]);
 return (
     
     <View style={styles.container}>
@@ -16,7 +18,8 @@ return (
         style={styles.textInput}
         placeholder="Email"
         placeholderTextColor="#444941"
-        setEmail={(email) => setEmail(email)}
+        onChangeText={(email) => setEmail(email)}
+        value={email}
         textContentType={"emailAddress"}
         autocomplete={"email"}
         keyboardType={"email-address"}
@@ -26,12 +29,34 @@ return (
         placeholder="Password"
         placeholderTextColor="#444941"
         secureTextEntry={true}
-        setPassword={(password) => setPassword(password)}
+        onChangeText={(password) => setPassword(password)}
+        value={password}
       />
 
       <TouchableOpacity 
         style={styles.loginBtn}
-        onPress={() => {navigation.navigate("GrocyStack")}}
+        onPress={async () => {
+          fetch('http://192.168.1.159:5000/login', {
+            method: "POST",
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              email: email,
+              passowrd: password
+            })
+          })
+          .then((response) => {response.json()})
+          .then((json) => setData(json))
+          .catch((error) => console.error(error))
+          console.log(JSON.stringify({
+            email: email,
+            passowrd: password
+          }));
+          console.log(data);
+          navigation.navigate("GrocyStack");
+        }}
       >
         <Text style={styles.loginText}>Login</Text>
       </TouchableOpacity>
