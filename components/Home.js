@@ -4,12 +4,14 @@ import {
     Text, 
     View, 
     Image,
+    Button,
 } from 'react-native';
 
-const Home = () => {
+const Home = ({navigation}) => {
     return (
         <View style={styles.container}>
             <Text style={styles.grocyText}>Home</Text>
+            <Button onPress={() => {navigation.navigate("Login")}} title={"Back"}></Button>
             <StatusBar style="auto" />
         </View>
     )
