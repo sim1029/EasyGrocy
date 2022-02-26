@@ -10,4 +10,17 @@ class Item(db.Model):
     link = db.Column(db.Text)
 
     group_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    users = db.relationship('User', backref='user', lazy=True)
+
+    def __repr__(self):
+        return '<Item %r>' % self.name
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'price': self.price,
+            'quantity': self.quantity,
+            'expiration': self.expiration,
+            'purchased': self.purchased,
+            'link': self.link,
+        }

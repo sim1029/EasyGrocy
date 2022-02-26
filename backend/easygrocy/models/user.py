@@ -12,3 +12,14 @@ class User(db.Model):
 
     items = db.relationship('Item', secondary=itemuser, lazy='subquery',
         backref='users')
+
+    def __repr__(self):
+        return '<User %r>' % self.name
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'email': self.email,
+            'password': self.password,
+            'name': self.name,
+        }
