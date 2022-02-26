@@ -6,66 +6,89 @@ from easygrocy import app, jwt, db
 from easygrocy.models import User, Group, Item
 
 
-bp = Blueprint('item', __name__, url_prefix='/api/item')\
+bp = Blueprint('item', __name__, url_prefix='/api/item')
 
 
-
-@bp.route('/<inn:group_id>/update_item', methods=["PUT"])
-def update_item(item_id, changes):
+@bp.route('<int:item_id>', methods=["GET", "PUT", "DELETE"])
+def get_item(item_id):
     item = Item.query.filter_by(id=item_id).first()
     if item is None:
-        return bad_request
+        return bad_request()
     # check users privelage to edit
-    if changes.name is not None:
-        update_statement = Item.update().where(id=item_id).values(name=changes.name)
-        db.session.execute(update_statement)
-    if changes.price is not None:
-        update_statement = Item.update().where(id=item_id).values(price=changes.price)
-        db.session.execute(update_statement)
-    if changes.quantity is not None:
-        update_statement = Item.update().where(
-            id=item_id).values(quantity=changes.quantity)
-        db.session.execute(update_statement)
-    if changes.expiration is not None:
-        update_statement = Item.update().where(
-            id=item_id).values(expiration=changes.expiration)
-        db.session.execute(update_statement)
-    if changes.purchased is not None:
-        update_statement = Item.update().where(
-            id=item_id).values(purchased=changes.purchased)
-        db.session.execute(update_statement)
-    if changes.link is not None:
-        update_statement = Item.update().where(id=item_id).values(link=changes.link)
-        db.session.execute(update_statement)
+    if request.method == "GET":
+        return jsonify(item=item)
+    if request.method == "PUT":
+        changes = request.get_json()
+        name = changes.get("name")
+        price = changes.get("price")
+        quantity = changes.get("quantity")
+        expiration = changes.get("expiration")
+        purchased = changes.get("purchased")
+        link = changes.get("link")
+
+        if name is not None:
+            update_statement = Item.update().where(id=item_id).values(name=name)
+            db.session.execute(update_statement)
+        if price is not None:
+            update_statement = Item.update().where(id=item_id).values(price=int(price))
+            db.session.execute(update_statement)
+        if quantity is not None:
+            update_statement = Item.update().where(
+                id=item_id).values(quantity=int(quantity))
+            db.session.execute(update_statement)
+        if expiration is not None:
+            update_statement = Item.update().where(
+                id=item_id).values(expiration=expiration)
+            db.session.execute(update_statement)
+        if purchased is not None:
+            update_statement = Item.update().where(
+                id=item_id).values(purchased=int(purchased))
+            db.session.execute(update_statement)
+        if link is not None:
+            update_statement = Item.update().where(id=item_id).values(link=link)
+            db.session.execute(update_statement)
+        db.session.commit()
+        return json_message('Successfully updated item.')
+    if request.method == "DELETE":
+        item = Item.query.filter_by(id=item_id).first()
+        if current_user not in item.users:
+            return unauthorized()
+        if item is None:
+            return bad_request()
+        db.session.delete(item)
+        db.session.commit()
+        return json_message('Successfully deleted item.')
+
+
+@bp.route('/create_item', methods=["POST"])
+def create_item():
+    json = request.get_json()
+    name = json.get("name")
+    price = json.get("price")
+    quantity = json.get("quantity")
+    expiration = json.get("expiration")
+    purchased = json.get("purchased")
+    link = json.get("link")
+    group_id = json.get("group_id")
+
+    if purchased is None:
+        purchased = 0
+
+    if name is None or group_id is None:
+        return bad_request()
+
+    item = Item(name=name, group_id=int(group_id), purchased=int(purchased))
+    if price is not None:
+        item.price = int(price)
+    if quantity is not None:
+        item.quantity = int(quantity)
+    if expiration is not None:
+        item.expiration = expiration
+    if link is not None:
+        item.link = link
+
+    db.session.add(item)
     db.session.commit()
-    return json_message('sucessful update')
-
-    # probably some error message cuz thats how u dont write dawgshit code
-
-
-@bp.route('int:group_id/delete item', methods=["DELETE"])
-def delete_item(item_id):
-    # check that the user is allowed to u
-    item_to_delete = Item.query.filter_by(id=item_id).first()
-    if item_to_delete is None:
-        return bad_request
-    db.session.delete(item_to_delete)
-    db.session.commit()
-
-
-@bp.route('<int:group_id>/create_item', methods=["POST"])
-def create_item(item):
-    item_to_add = {
-        'id': item.id,
-        'name': item.name,
-        'price': item.price,
-        'quantity': item.quantity,
-        'expiration': item.expiration,
-        'purchased': item.purchased,
-        'link': item.link,
-        'group_id': item.group_id,
-    }
-    db.session.add(item_to_add)
-    db.session.commit()
+    return jsonify(item=item)
 
     # create item

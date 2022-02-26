@@ -12,7 +12,7 @@ bp = Blueprint('group', __name__, url_prefix='/api/group')
 def user_in_group(user, group):
     return group in user.groups
 
-@bp.route('<int:group_id>', methods=["GET", "POST"])
+@bp.route('<int:group_id>', methods=["GET", "PUT"])
 @jwt_required()
 def get_group(group_id):
     group = Group.query.filter_by(id=group_id).first()
@@ -22,7 +22,7 @@ def get_group(group_id):
         return unauthorized()
     if request.method == "GET":
         return jsonify(group=group.serialize())
-    else:
+    if request.method == "PUT":
         json = request.get_json()
         name = json.get("name")
         if name is not None:
@@ -30,6 +30,18 @@ def get_group(group_id):
             db.session.add(group)
             db.session.commit()
         return json_message("Group successfully modified.")
+
+@bp.route('create_group', methods=["POST"])
+@jwt_required()
+def create_group():
+    json = request.get_json()
+    name = json.get("name")
+    if name is None:
+        return bad_request()
+    group = Group(name=name)
+    db.session.add(group)
+    db.session.commit()
+    return jsonify(group=group)
 
 @bp.route('<int:group_id>/add_user/<int:user_id>', methods=["POST"])
 @jwt_required()
