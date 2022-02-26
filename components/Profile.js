@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { 
     StyleSheet, 
     Text, 
+    TextInput,
+    TouchableOpacity,
     View, 
     Button,
  } from 'react-native';
