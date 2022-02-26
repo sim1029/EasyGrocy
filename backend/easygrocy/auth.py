@@ -14,7 +14,7 @@ def login():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
     # grab user with email given
-    user = User.query.filter_by(username=email).first()
+    user = User.query.filter_by(email=email).first()
     # grab password from
     if not user or check_password_hash(user.password, password):
         return{"msg": "Wrong email or password"}, 401
@@ -31,11 +31,12 @@ def logout():
     return response
 
 
-@app.route('./register', methods=["POST"])
+@app.route('/register', methods=["POST"])
 def register():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
     name = request.json.get("name", None)
+    error = None
     if not email:
         error = 'enter a username dumbass'
     if not password:
