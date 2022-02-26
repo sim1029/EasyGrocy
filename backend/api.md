@@ -16,7 +16,6 @@
         }
         ```
   * If user is not found or password is incorrect returns HTTP `400 Bad Request`.
-
 * `POST`    `/register`
   * Requires `email`, `password`, and `name` fields in `json` body.
   * Returns a `json` with `access_token` containing the unique access token.
@@ -33,7 +32,6 @@
         ```
   * If user already is registered, returns HTTP `400 Bad Request`.
   * If one or more fields isn't filled out, returns HTTP `400 Bad Request`.
-
 * `POST`    `/logout`
   * Logs out user.
   * Returns a `json` with `message` indicating sucessful logout.
@@ -54,11 +52,25 @@
         ```
   * If user making the request is not in the group, returns a HTTP `401 Unauthorized`.
   * If `group_id` is invalid, returns a HTTP `400 Bad Request`.
-* `POST`     `/api/group/<int:group_id>`
+* `PUT`     `/api/group/<int:group_id>`
   * Modifies the fields associated with the `group` with the given `group_id`.
   * Returns a `json` body with a message indicating successful modification.
   * If user making the request is not in the group, returns a HTTP `401 Unauthorized`.
   * If `group_id` is invalid, returns a HTTP `400 Bad Request`.
+* `POST`     `/api/group`
+  * Creates a new `group` with the given `name` supplied in the `json` request.
+  * Returns a `json` body with `group` field being newly made `group`.
+    * Ex:
+
+        ```json
+        {
+            group={
+                'id': 1,
+                'name': 'OurSquad',
+            }
+        }
+        ```
+  * If `json` request is invalid, returns a HTTP `400 Bad Request`.
 * `POST`     `/api/group/<int:group_id>/add_user/<int:user_id>`
   * Adds the user with the given `user_id` to the group.
   * Returns a `json` body with a message indicating successful addition.
@@ -144,3 +156,54 @@
   * If `user_id` is invalid, returns a HTTP `400 Bad Request`.
 
 ## Item
+* `GET`    `/api/item/<int:item_id>`
+  * Returns a `json` object with the fields of the item with the given `item_id`.
+    * Ex:
+
+        ```json
+        {
+            item={
+                    'id': 1,
+                    'name': 'Milk',
+                    'price': 5,
+                    'quantity': 2,
+                    'expiration': '',
+                    'purchased': 1,
+                    'link': '',
+                    'group_id': 1,
+            }
+        }
+        ```
+  * If `item_id` is invalid, returns a HTTP `400 Bad Request`.
+* `PUT`    `/api/item/<int:item_id>`
+  * Takes a `json` object that contains the fields to change:
+    * Fields: `name`, `price`, `quantity`, `purchased`, `link`, `expiration` 
+  * Returns a `json` body with a message indicating successful modification.
+  * If `item_id` is invalid, returns a HTTP `400 Bad Request`.
+* `POST`    `/api/item/create_item`
+  * Takes a `json` object that contains the fields of the new item
+    * Required: `name`, `group_id`
+    * Optional: `price`, `quantity`, `purchased`, `expiration`, `link`
+  * Returns a `json` body with `item` field being the newly made item.
+    * Ex:
+
+        ```json
+        {
+            item={
+                    'id': 1,
+                    'name': 'Milk',
+                    'price': 5,
+                    'quantity': 2,
+                    'expiration': '',
+                    'purchased': 1,
+                    'link': '',
+                    'group_id': 1,
+            }
+        }
+        ```
+  * If required `json` fields are not present, returns a HTTP `400 Bad Request`.
+
+* `DELETE`    `/api/item/<int:group_id>`
+  * Deletes the item with given `item_id`.
+  * Returns a `json` body with a message indicating successful deletion.
+  * If `item_id` is invalid, returns a HTTP `400 Bad Request`.
