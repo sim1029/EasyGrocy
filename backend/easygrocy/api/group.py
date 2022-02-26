@@ -41,7 +41,7 @@ def create_group():
     group = Group(name=name)
     db.session.add(group)
     db.session.commit()
-    return jsonify(group=group)
+    return jsonify(group=group.serialize())
 
 @bp.route('<int:group_id>/add_user/<int:user_id>', methods=["POST"])
 @jwt_required()
@@ -76,4 +76,4 @@ def get_items(group_id):
     if not user_in_group(current_user, group):
         return unauthorized()
     items = Item.query.filter_by(group_id=group_id)
-    return jsonify(items=items)
+    return jsonify(items=[i.serialize() for i in items])

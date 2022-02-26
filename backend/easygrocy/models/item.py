@@ -15,13 +15,18 @@ class Item(db.Model):
         return '<Item %r>' % self.name
 
     def serialize(self):
-        return {
+        serialized = {
             'id': self.id,
             'name': self.name,
-            'price': self.price,
-            'quantity': self.quantity,
-            'expiration': self.expiration,
             'purchased': self.purchased,
-            'link': self.link,
             'group_id': self.group_id,
         }
+        if self.price is not None:
+            serialized['price'] = self.price
+        if self.quantity is not None:
+            serialized['quantity'] = self.quantity
+        if self.expiration is not None:
+            serialized['expiration'] = self.expiration.isoformat()
+        if self.link is not None:
+            serialized['link'] = self.link
+        return serialized
