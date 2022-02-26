@@ -1,4 +1,4 @@
-from flask import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from easygrocy import db
 from easygrocy.models import groupuser, itemuser
