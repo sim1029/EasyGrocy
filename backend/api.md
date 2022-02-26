@@ -39,6 +39,30 @@
   * Returns a `json` with `message` indicating sucessful logout.
 
 ## Group
+* `GET`     `/api/group/<int:group_id>`
+  * Returns the `group` with the given `group_id`.
+  * Returns a `json` body with `group` field containing the associated group fields.
+    * Ex:
+
+        ```json
+        {
+            group={
+                'id': 1,
+                'name': 'OurHouse',
+            }
+        }
+        ```
+  * If user making the request is not in the group, returns a HTTP `401 Unauthorized`.
+  * If `group_id` is invalid, returns a HTTP `400 Bad Request`.
+* `POST`     `/api/group/<int:group_id>`
+  * Modifies the fields associated with the `group` with the given `group_id`.
+  * Returns a `json` body with a message indicating successful modification.
+  * If user making the request is not in the group, returns a HTTP `401 Unauthorized`.
+  * If `group_id` is invalid, returns a HTTP `400 Bad Request`.
+* `POST`     `/api/group/<int:group_id>/add_user/<int:user_id>`
+  * Adds the user with the given `user_id` to the group.
+  * Returns a `json` body with a message indicating successful addition.
+  * If `group_id` or `user_id` is invalid, returns a HTTP `400 Bad Request`.
 * `GET`     `/api/group/<int:group_id>/users`
   * Returns the list of all users associated with the given `group_id`.
   * Returns a `json` body with `users` field being a list of `user` information.

@@ -13,3 +13,7 @@ def bad_request():
         'message': "Invalid request.",
     }), 400
 
+def json_message(message):
+    return jsonify({
+        'message': message,
+    })
