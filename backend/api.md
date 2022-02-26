@@ -144,3 +144,67 @@
   * If `user_id` is invalid, returns a HTTP `400 Bad Request`.
 
 ## Item
+
+* `Put`    `/<inn:group_id>/update_item`
+  * Takes the item_id and json with the changes. If a field is not being changes leave that field in the json object empty
+
+  * on completion returns successful message
+        ** Ex:
+
+        ```json
+        {
+           changes =[
+                {
+                    'name': 'choccy milk',
+                    'price': self.price,
+                    'quantity': '',
+                    'expiration': '',
+                    'purchased': '',
+                    'link': '',
+                    'group_id': '',
+
+                }
+            ]
+        }
+        ```
+    * returns bad_request if item is not found
+    * nothing happens when no changes are mad## Item
+
+* `post`    `/<inn:group_id>/create_item`
+  * Takes a json item with the proper fields and makes a new field
+  * on completion returns successful message
+        ** Ex:
+
+        ```json
+        {
+            item =[
+                {
+                    'name': 'choccy milk',
+                    'price': self.price,
+                    'quantity': '3',
+                    'expiration': 'tuesday',
+                    'purchased': 'not yet',
+                    'link': 'adultwebsite.com',
+                    'group_id': '69',
+                }
+            ]
+        }
+        ```
+    * returns bad_request if item is not found
+
+* `delete`    `/<inn:group_id>/delete_item`
+  * Takes the item_id and deletes that item
+  * on completion returns successful message
+        ** Ex:
+
+        ```json
+        {
+           id =[
+                {
+                    'id': 123,
+
+                }
+            ]
+        }
+        ```
+    * returns bad_request if item is not found
