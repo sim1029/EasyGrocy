@@ -61,13 +61,13 @@ def register():
         app.logger.debug('Register request for existing user.')
         return {"message": "User already exists."}, 400
 
-    newUser = User(email=email, password=password, name=name)
-    newUser.set_password(password)
-    db.session.add(newUser)
+    user = User(email=email, password=password, name=name)
+    user.set_password(password)
+    db.session.add(user)
     db.session.commit()
     
     app.logger.debug('Register succeeded for user: %s', user)
-    access_token = create_access_token(identity=newUser)
+    access_token = create_access_token(identity=user)
     response = {"access_token": access_token}
     return response
 
