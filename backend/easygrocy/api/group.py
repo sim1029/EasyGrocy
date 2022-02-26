@@ -15,10 +15,17 @@ def unauthorized():
         'message': "Permission denied.",
     }), 401
 
+def bad_request():
+    return jsonify({
+        'message': "Invalid group.",
+    }), 400
+
 @bp.route('<int:group_id>/users')
 @jwt_required()
 def get_users(group_id):
-    group = Group.query.filter_by(id=group_id).first_or_404()
+    group = Group.query.filter_by(id=group_id).first()
+    if group is None:
+        return bad_request()
     if not user_in_group(current_user, group):
         return unauthorized()
     return jsonify(users=[u.serialize() for u in group.users])
@@ -26,8 +33,9 @@ def get_users(group_id):
 @bp.route('<int:group_id>/items')
 @jwt_required()
 def get_items(group_id):
-    # Make sure that the group is valid
-    group = Group.query.filter_by(id=group_id).first_or_404()
+    group = Group.query.filter_by(id=group_id).first()
+    if group is None:
+        return bad_request()
     if not user_in_group(current_user, group):
         return unauthorized()
     items = Item.query.filter_by(group_id=group_id)

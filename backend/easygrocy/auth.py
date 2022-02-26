@@ -16,8 +16,8 @@ def login():
     # grab user with email given
     user = User.query.filter_by(email=email).first()
     # grab password from
-    if not user or check_password_hash(user.password, password):
-        return{"msg": "Wrong email or password"}, 401
+    if not user or user.check_password(password):
+        return {"message": "Wrong email or password."}, 400
 
     # if at this point, then email and password were correct
     access_token = create_access_token(identity=user)
@@ -27,7 +27,7 @@ def login():
 
 @app.route('/logout', methods=["POST"])
 def logout():
-    unset_jwt_cookies(response=jsonify({"msg": "logout sucessful"}))
+    unset_jwt_cookies(response=jsonify({"message": "Logout successful."}))
     return response
 
 
@@ -46,10 +46,11 @@ def register():
 
     if error is None:
         newUser = User(email=email, password=password, name=name)
+        newUser.set_password(password)
         db.session.add(newUser)
         db.session.commit()
     else:
-        return {"msg": "Not all forms properly filled out"}
+        return {"message": "Not all forms properly filled out."}, 400
 
 
 @jwt.user_identity_loader
