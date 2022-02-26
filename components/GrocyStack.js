@@ -8,9 +8,9 @@ import Profile from "./Profile"
 
 const Tab = createBottomTabNavigator();
 
-const GrocyStack = () => {
+const GrocyStack = ({navigation}) => {
   return (
-    <NavigationContainer>
+    // <NavigationContainer>
       <Tab.Navigator
         screenOptions={{
             headerShown: false,
@@ -50,7 +50,7 @@ const GrocyStack = () => {
             }}>
         </Tab.Screen>
       </Tab.Navigator>
-    </NavigationContainer>
+    // </NavigationContainer>
   )
 }
 
