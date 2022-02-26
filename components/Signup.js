@@ -4,9 +4,10 @@ import { StyleSheet, View, TextInput, Button, TouchableOpacity, Text,
 } from "react-native";
 
 const Signup = ({navigation}) => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("user1@gmail.com");
+    const [password, setPassword] = useState("user1pass");
+    const [username, setUsername] = useState("user1");
+    const [data, setData] = useState([]);
 return (
     
     <View style={styles.container}>
@@ -16,13 +17,15 @@ return (
         style={styles.TextInput}
         placeholder="Username"
         placeholderTextColor="#444941"
-        setUsername={(username) => setLastname(username)}
+        onChangeText={(username) => setUsername(username)}
+        value={username}
       />
       <TextInput
         style={styles.TextInput}
         placeholder="Email"
         placeholderTextColor="#444941"
-        setEmail={(email) => setEmail(email)}
+        onChangeText={(email) => setEmail(email)}
+        value={email}
         textContentType={"emailAddress"}
         autocomplete={"email"}
         keyboardType={"email-address"}
@@ -32,12 +35,36 @@ return (
         placeholder="Password"
         placeholderTextColor="#444941"
         secureTextEntry={true}
-        setPassword={(password) => setPassword(password)}
+        onChangeText={(password) => setPassword(password)}
+        value={password}
       />
       
       <TouchableOpacity 
-        style={styles.loginBtn}
-        onPress={() => {navigation.navigate("GrocyStack")}}
+        style={styles.signUpButton}
+        onPress={() => {
+          fetch('http://192.168.1.159:5000/register', {
+            method: "POST",
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              name: username,
+              email: email,
+              password: password
+            })
+          })
+          .then((response) => response.json())
+          .then((json) => setData(json))
+          .catch((error) => console.error(error))
+          console.log(JSON.stringify({
+            name: username,
+            email: email,
+            password: password
+          }));
+          console.log(data);
+          navigation.navigate("GrocyStack");
+      }}
       >
         <Text style={styles.loginText}>Sign up</Text>
       </TouchableOpacity>
@@ -66,7 +93,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
   },
-  loginBtn: {
+  signUpButton: {
     width: "80%",
     borderRadius: 25,
     height: 50,

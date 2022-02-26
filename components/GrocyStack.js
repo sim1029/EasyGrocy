@@ -40,12 +40,12 @@ const GrocyStack = ({navigation}) => {
             }}>
         </Tab.Screen>
         <Tab.Screen 
-            name="Profile" 
+            name="Settings" 
             component={Profile} 
             options={{
-                title: "Profile",
+                title: "Settings",
                 tabBarIcon: () => {
-                    return <Image style={styles.tabBarIcon} source={require("../assets/TabBar/profile.png")}></Image>
+                    return <Image style={styles.tabBarIcon} source={require("../assets/TabBar/settings.png")}></Image>
                 }
             }}>
         </Tab.Screen>

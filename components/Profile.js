@@ -3,12 +3,14 @@ import {
     StyleSheet, 
     Text, 
     View, 
+    Button,
 } from 'react-native';
 
-const Profile = () => {
+const Profile = ({navigation}) => {
     return (
         <View style={styles.container}>
-            <Text style={styles.grocyText}>Profile</Text>
+            <Text style={styles.grocyText}>Settings</Text>
+            <Button onPress={() => {navigation.navigate("Login")}} title={"Back"}></Button>
             <StatusBar style="auto" />
         </View>
     )

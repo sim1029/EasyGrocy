@@ -10,32 +10,40 @@ import GrocyStack from './GrocyStack';
 const Stack = createStackNavigator();
 
 const Auth = () => {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-            headerShown: false,
-            // animationEnabled: false,
-        }}
-      >
-          <Stack.Screen
-            name={"Login"}
-            component={Login}
-          >
-          </Stack.Screen>
-          <Stack.Screen
-            name={"GrocyStack"}
-            component={GrocyStack}
-          >
-          </Stack.Screen>
-          <Stack.Screen
-            name={"Signup"}
-            component={Signup}
-          >
-          </Stack.Screen>
-      </Stack.Navigator>
-    </NavigationContainer>
-  )
+    // const linking = {
+    //     prefixes: [
+          
+    //     ],
+    //     config: {
+          
+    //     },
+    // };
+    return (
+        <NavigationContainer>
+            <Stack.Navigator
+                screenOptions={{
+                    headerShown: false,
+                    // animationEnabled: false,
+                }}
+            >
+                <Stack.Screen
+                    name={"Login"}
+                    component={Login}
+                >
+                </Stack.Screen>
+                <Stack.Screen
+                    name={"GrocyStack"}
+                    component={GrocyStack}
+                >
+                </Stack.Screen>
+                <Stack.Screen
+                    name={"Signup"}
+                    component={Signup}
+                >
+                </Stack.Screen>
+            </Stack.Navigator>
+        </NavigationContainer>
+    );
 }
 
 export default Auth;
