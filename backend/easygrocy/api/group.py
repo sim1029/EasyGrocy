@@ -5,7 +5,7 @@ from flask_jwt_extended import jwt_required, current_user
 from easygrocy import app, jwt, db
 from easygrocy.models import User, Group, Item
 
-bp = Blueprint('group', __name__, url_prefix='/group')
+bp = Blueprint('group', __name__, url_prefix='/api/group')
 
 def user_in_group(user, group):
     return group in user.groups
