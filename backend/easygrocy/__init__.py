@@ -24,9 +24,11 @@ except OSError:
 
 db.create_all()
 
-from . import api
 from . import models
 from . import auth
 
-app.register_blueprint(api.group.bp)
+from .api import group, user
+
 app.register_blueprint(auth.bp)
+app.register_blueprint(group.bp)
+app.register_blueprint(user.bp)

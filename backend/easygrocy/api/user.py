@@ -5,7 +5,7 @@ from flask_jwt_extended import jwt_required, current_user
 from easygrocy import db
 from easygrocy.models import User
 
-from api import unauthorized, bad_request, json_message
+from . import unauthorized, bad_request, json_message
 
 bp = Blueprint('user', __name__, url_prefix='/api/user')
 
