@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-function useToken() {
+const useToken = () => {
 
-  function getToken() {
+  const getToken = async () => {
     try {
         const userToken = await AsyncStorage.getItem('token');
         if(userToken !== null) {
@@ -17,7 +17,7 @@ function useToken() {
 
   const [token, setToken] = useState(getToken());
 
-  function saveToken(userToken) {
+  const saveToken = async (userToken) => {
     try {
         await AsyncStorage.setItem('token', userToken);
     } catch (e) {
@@ -26,7 +26,7 @@ function useToken() {
     setToken(userToken);
   };
 
-  function removeToken() {
+  const removeToken = async () => {
     try {
         await AsyncStorage.removeItem('token');
     } catch(e) {

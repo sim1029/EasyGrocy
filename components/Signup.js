@@ -2,12 +2,16 @@ import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, TextInput, Button, TouchableOpacity, Text,
 } from "react-native";
+import useToken from "./useToken";
+import localData from "./localData";
 
 const Signup = ({navigation}) => {
-    const [email, setEmail] = useState("user1@gmail.com");
-    const [password, setPassword] = useState("user1pass");
-    const [username, setUsername] = useState("user1");
+    const [email, setEmail] = useState("u4@gmail.com");
+    const [password, setPassword] = useState("pass");
+    const [username, setUsername] = useState("u4");
     const [data, setData] = useState([]);
+    const {token, removeToken, setToken} = useToken();
+    const {currGroup, removeCurrGroup, setCurrGroup, userId, removeUserId, setUserId} = localData();
 return (
     
     <View style={styles.container}>
@@ -54,16 +58,19 @@ return (
               password: password
             })
           })
-          .then((response) => response.json())
-          .then((json) => setData(json))
+          .then((response) => {
+            if(!response.ok) throw new Error(response.status);
+            else return response.json();
+          })
+          .then((json) => {
+            setData(json);
+            // console.log(data.access_token);
+            setToken(data.access_token);
+            // console.log(username);
+            setUserId(username);
+            navigation.navigate("GrocyStack");
+          })
           .catch((error) => console.error(error))
-          console.log(JSON.stringify({
-            name: username,
-            email: email,
-            password: password
-          }));
-          console.log(data);
-          navigation.navigate("GrocyStack");
       }}
       >
         <Text style={styles.loginText}>Sign up</Text>
