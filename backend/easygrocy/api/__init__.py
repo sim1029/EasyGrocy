@@ -1,8 +1,5 @@
 from flask import jsonify
 
-from . import group
-from . import user
-
 def unauthorized():
     return jsonify({
         'message': "Permission denied.",
