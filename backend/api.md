@@ -1,8 +1,45 @@
 # EasyGrocy API Documentation
 
-## Group
+## Auth
+* `POST`    `/login`
+  * Requires `email`, `password`, fields in `json` body.
+  * Returns a `json` with `access_token` containing the unique access token.
+    * Ex:
 
-* `GET` `/api/group/<int:group_id>/users`
+        ```json
+        {
+           response =[
+                {
+                    'access_token': 123,
+                }
+            ]
+        }
+        ```
+  * If user is not found or password is incorrect returns HTTP `400 Bad Request`.
+
+* `POST`    `/register`
+  * Requires `email`, `password`, and `name` fields in `json` body.
+  * Returns a `json` with `access_token` containing the unique access token.
+    * Ex:
+
+        ```json
+        {
+           response =[
+                {
+                    'access_token': 123,
+                }
+            ]
+        }
+        ```
+  * If user already is registered, returns HTTP `400 Bad Request`.
+  * If one or more fields isn't filled out, returns HTTP `400 Bad Request`.
+
+* `POST`    `/logout`
+  * Logs out user.
+  * Returns a `json` with `message` indicating sucessful logout.
+
+## Group
+* `GET`     `/api/group/<int:group_id>/users`
   * Returns the list of all users associated with the given `group_id`.
   * Returns a `json` body with `users` field being a list of `user` information.
     * Ex:
@@ -18,10 +55,9 @@
             ]
         }
         ```
-
   * If user is not in the group, returns HTTP `401 Unauthorized`.
   * If `group_id` is invalid, returns a HTTP `400 Bad Request`.
-* `GET` `/api/group/<int:group_id>/items`
+* `GET`     `/api/group/<int:group_id>/items`
   * Returns the list of all items associated with the given `group_id`.
   * Returns a `json` body with `items` field being a list of `item` information.
     * Ex:
@@ -42,48 +78,29 @@
             ]
         }
         ```
-
   * If user is not in the group, returns HTTP `401 Unauthorized`.
   * If `group_id` is invalid, returns a HTTP `400 Bad Request`.
 
 ## User
-
-* `POST`    `/login`
-  * Takes email and password as parameters
-  * Returns a `json` with `access_token` containing the unique access token
+* `GET`     `/api/user/<int:user_id>`
+  * Returns information associated with the given user.
+  * Returns a `json` body with `user` field containg the associated user fields.
     * Ex:
 
         ```json
         {
-           response =[
-                {
-                    'access_token': 123,
-                }
-            ]
+            user={
+                'id': 1,
+                'email': 'example@gmail.com',
+                'name': 'Simon',
+            }
         }
         ```
-
-  * If user is not found or password is incorrect returns HTTP `400 Unauthorized`
-
-* `POST`    `/register`
-  * Takes email, password, and name as parameters
-  * Returns a `json` with `access_token` containing the unique access token
-    * Ex:
-
-        ```json
-        {
-           response =[
-                {
-                    'access_token': 123,
-                }
-            ]
-        }
-        ```
-
-  * If one or more fields isn't filled out returns HTTP `400 Unauthorized`
-
-* `POST`    `logout`
-  * Unsets JWT for the user
-  * Returns a `json` with `message` indicating sucessful logout
+  * If `user_id` is invalid, returns a HTTP `400 Bad Request`.
+* `DELETE`     `/api/user/<int:user_id>`
+  * Deletes a given user.
+  * Returns a `json` body with a message indicating successful deletion.
+  * If user making the request does not match `user_id` , returns a HTTP `401 Unauthorized`.
+  * If `user_id` is invalid, returns a HTTP `400 Bad Request`.
 
 ## Item
