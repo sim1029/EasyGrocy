@@ -1,24 +1,15 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, jsonify
 
 from flask_jwt_extended import jwt_required, current_user
 
-from easygrocy import app, jwt, db
-from easygrocy.models import User, Group, Item
+from easygrocy.models import Group, Item
+
+from api import unauthorized, bad_request
 
 bp = Blueprint('group', __name__, url_prefix='/api/group')
 
 def user_in_group(user, group):
     return group in user.groups
-
-def unauthorized():
-    return jsonify({
-        'message': "Permission denied.",
-    }), 401
-
-def bad_request():
-    return jsonify({
-        'message': "Invalid group.",
-    }), 400
 
 @bp.route('<int:group_id>/users')
 @jwt_required()

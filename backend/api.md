@@ -84,7 +84,7 @@
 ## User
 * `GET`     `/api/user/<int:user_id>`
   * Returns information associated with the given user.
-  * Returns a `json` body with `user` field containg the associated user fields.
+  * Returns a `json` body with `user` field containing the associated user fields.
     * Ex:
 
         ```json
@@ -94,6 +94,22 @@
                 'email': 'example@gmail.com',
                 'name': 'Simon',
             }
+        }
+        ```
+  * If `user_id` is invalid, returns a HTTP `400 Bad Request`.
+* `GET`     `/api/user/<int:user_id>/groups`
+  * Returns all `group`s that a `user` is in.
+  * Returns a `json` body with `groups` field being a list of `group` information.
+    * Ex:
+
+        ```json
+        {
+            groups=[
+                {
+                    'id': 1,
+                    'name': 'OurHouse',
+                }
+            ]
         }
         ```
   * If `user_id` is invalid, returns a HTTP `400 Bad Request`.
