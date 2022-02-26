@@ -1,0 +1,39 @@
+# DB Planning
+
+## User:
+* id INTEGER PRIMARY KEY AUTOINCREMET
+* email TEXT UNIQUE NOT NULL
+* password TEXT NOT NULL
+* name TEXT NOT NULL
+* (squadList: squadUser)
+
+## squad:
+* id INTEGER PRIMARY KEY AUTOINCREMET
+* name TEXT NOT NULL
+* (UserList: squadUser)
+
+## Item:
+* id INTEGER PRIMARY KEY AUTOINCREMENT
+* name TEXT NOT NULL
+* price INTEGER
+* quantity INTEGER
+* expiration TIMESTAMP NOT NULL
+* purchased INTEGER
+* link TEXT
+* squad_id INTEGER NOT NULL,
+* FOREIGN KEY (squad_id) REFERENCES squad (id)
+* (UserList: ItemUser)
+
+## ItemUser:
+* id INTEGER PRIMARY KEY AUTOINCREMENT
+* user_id INTEGER NOT NULL,
+* item_id INTEGER NOT NULL,
+* FOREIGN KEY (user_id) REFERENCES user (id),
+* FOREIGN KEY (item_id) REFERENCES item (id)
+
+## squadUser:
+* id INTEGER PRIMARY KEY AUTOINCREMENT
+* user_id INTEGER NOT NULL,
+* squad_id INTEGER NOT NULL,
+* FOREIGN KEY (user_id) REFERENCES user (id),
+* FOREIGN KEY (squad_id) REFERENCES squad (id)
