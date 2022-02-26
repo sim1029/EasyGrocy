@@ -9,3 +9,7 @@ groupuser = db.Table('groupuser',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
     db.Column('group_id', db.Integer, db.ForeignKey('group.id'), primary_key=True),
 )
+
+from .user import User
+from .group import Group
+from .item import Item
