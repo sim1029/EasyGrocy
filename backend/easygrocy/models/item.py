@@ -23,4 +23,5 @@ class Item(db.Model):
             'expiration': self.expiration,
             'purchased': self.purchased,
             'link': self.link,
+            'group_id': self.group_id,
         }
