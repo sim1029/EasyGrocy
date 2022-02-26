@@ -1,8 +1,7 @@
-
-import Signup from "./Signup.js";
+import GrocyStack from './components/GrocyStack'
 
 export default function App() {
   return (
-    <Signup></Signup>
-  ) 
+    <GrocyStack></GrocyStack>
+  );
 }
