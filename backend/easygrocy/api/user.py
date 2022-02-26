@@ -5,7 +5,7 @@ from flask_jwt_extended import jwt_required, current_user
 from easygrocy import db
 from easygrocy.models import User
 
-from api import unauthorized, bad_request
+from api import unauthorized, bad_request, json_message
 
 bp = Blueprint('user', __name__, url_prefix='/api/user')
 
@@ -35,6 +35,4 @@ def get_user(user_id):
         db.session.delete(user)
         db.session.commit()
 
-        return jsonify({
-            "message": "User successfully deleted.",
-        })
+        return json_message("User successfully deleted.")
