@@ -7,6 +7,7 @@ import {
     TouchableHighlight,
     SafeAreaView,
     TextInput,
+    Pressable,
 } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
@@ -69,15 +70,24 @@ const Home = () => {
     );
 
     const renderHeader = () => (
-        <TextInput
-            autoCapitalize='none'
-            autoCorrect={true}
-            onChangeText={() => console.log("Hi")}
-            status='info'
-            placeholder='Search'
-            style={styles.searchInput}
-            textStyle={{ color: '#000' }}
-        />
+        <View style={styles.headerView}>
+            <View style={{flex: 5}}>
+                <TextInput
+                    autoCapitalize='none'
+                    autoCorrect={true}
+                    onChangeText={() => console.log("Hi")}
+                    status='info'
+                    placeholder='Search'
+                    style={styles.searchInput}
+                    textStyle={{ color: '#000' }}
+                />
+            </View>
+            <View style={{flex: 1}}>
+                <TouchableOpacity style={styles.newItemBtn} onPress={() => console.log("NewItem++")}>
+                    <Text style={styles.newItemButton}>+</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
     );
 
     return (
@@ -159,7 +169,19 @@ const styles = StyleSheet.create({
         color: "floralwhite",
         textAlign: "center",
         fontSize: 20,
-    }
+    },
+    newItemButton: {
+        color: "floralwhite",
+        fontSize: 40,
+    },
+    headerView: {
+        backgroundColor: "#444941",
+        flexDirection: "row",
+    },
+    newItemBtn: {
+        justifyContent: "center",
+        alignItems: "center",
+    },
 });
 
 export default Home;
