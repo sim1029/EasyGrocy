@@ -4,11 +4,15 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, Image, TextInput, Button, TouchableOpacity, Text,
 } from "react-native";
 import { NativeRouter, Route, Routes } from "react-router-native";
+import useToken from "./useToken";
+import localData from "./localData";
 
 const Login = ({navigation}) => {
-    const [email, setEmail] = useState("user1@gmail.com");
-    const [password, setPassword] = useState("user1pass");
+    const [email, setEmail] = useState("u4@gmail.com");
+    const [password, setPassword] = useState("pass");
     const [data, setData] = useState([]);
+    const {token, removeToken, setToken} = useToken();
+    const {currGroup, removeCurrGroup, setCurrGroup, userId, removeUserId, setUserId} = localData();
 return (
     
     <View style={styles.container}>
@@ -35,8 +39,7 @@ return (
 
       <TouchableOpacity 
         style={styles.loginBtn}
-        onPress={async () => {
-          console.log(data);
+        onPress={() => {
           fetch('http://192.168.1.159:5000/login', {
             method: "POST",
             headers: {
@@ -48,11 +51,18 @@ return (
               password: password
             })
           })
-          .then(response => response.json())
-          .then(json => setData(json))
+          .then((response) => {
+              if(!response.ok) throw new Error(response.status);
+              else return response.json();
+          })
+          .then((json) => {
+            setData(json);
+            console.log(data.access_token);
+            setToken(data.access_token);
+            console.log(userId);
+            navigation.navigate("GrocyStack");
+          })
           .catch((error) => console.error(error))
-          console.log(data);
-          navigation.navigate("GrocyStack");
         }}
       >
         <Text style={styles.loginText}>Login</Text>
