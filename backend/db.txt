@@ -5,23 +5,23 @@
 * email TEXT UNIQUE NOT NULL
 * password TEXT NOT NULL
 * name TEXT NOT NULL
-* (squadList: squadUser)
+* (groupList: groupUser)
 
-## squad:
+## group:
 * id INTEGER PRIMARY KEY AUTOINCREMET
 * name TEXT NOT NULL
-* (UserList: squadUser)
+* (UserList: groupUser)
 
 ## Item:
 * id INTEGER PRIMARY KEY AUTOINCREMENT
 * name TEXT NOT NULL
 * price INTEGER
 * quantity INTEGER
-* expiration TIMESTAMP NOT NULL
+* expiration TIMESTAMP
 * purchased INTEGER
 * link TEXT
-* squad_id INTEGER NOT NULL,
-* FOREIGN KEY (squad_id) REFERENCES squad (id)
+* group_id INTEGER NOT NULL,
+* FOREIGN KEY (group_id) REFERENCES group (id)
 * (UserList: ItemUser)
 
 ## ItemUser:
@@ -31,9 +31,9 @@
 * FOREIGN KEY (user_id) REFERENCES user (id),
 * FOREIGN KEY (item_id) REFERENCES item (id)
 
-## squadUser:
+## groupUser:
 * id INTEGER PRIMARY KEY AUTOINCREMENT
 * user_id INTEGER NOT NULL,
-* squad_id INTEGER NOT NULL,
+* group_id INTEGER NOT NULL,
 * FOREIGN KEY (user_id) REFERENCES user (id),
-* FOREIGN KEY (squad_id) REFERENCES squad (id)
+* FOREIGN KEY (group_id) REFERENCES group (id)
