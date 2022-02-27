@@ -8,7 +8,7 @@ import useToken from "./useToken";
 import localData from "./localData";
 
 const Login = ({navigation}) => {
-    const [email, setEmail] = useState("u1@gmail.com");
+    const [email, setEmail] = useState("u2@gmail.com");
     const [password, setPassword] = useState("pass");
     const {getToken, removeToken, setToken} = useToken();
     const {getUserId, setUserId, removeUserId} = localData();
@@ -56,6 +56,8 @@ return (
           })
           .then((json) => {
             setToken(json.access_token);
+            setUserId("" + json.user_id);
+            console.log(json.user_id);
             navigation.navigate("GrocyStack");
           })
           .catch((error) => console.error(error)) 

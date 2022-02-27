@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
     StyleSheet, 
     Text, 
@@ -11,12 +11,50 @@ import {
     Modal,
 } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
+import localData from "./localData";
+import useToken from "./useToken";
 
 
 const Home = () => {
-    const [listData, setListData] = useState(Array(20).fill("").map((_, i) => ({key: `${i}`, text: `item#${i}`})));
+    const [listData, setListData] = useState(Array(1).fill("").map((_, i) => ({key: `${i}`, text: `item#${i}`})));
     const [modalVisible, setModalVisible] = useState(false);
-    const [modalPrice, setModalPrice] = useState(0.0);
+    const [modalPrice, setModalPrice] = useState(0);
+    const [modalName, setModalName] = useState("");
+    const [squad, setSquadName] = useState("");
+    // const [listData, setListData] = useState(Array());
+    const {getToken, removeToken, setToken} = useToken();
+    const {getUserId, setUserId, removeUserId, getGroupId, getGroupName} = localData();
+
+    getGroupName().then((squad) => setSquadName(squad));
+
+    const getItems = async () => {
+        // getUserId().then((id) => console.log(id));
+        // insert getGroupId() func
+        const group = await getGroupId();
+        if (group) {
+            getToken().then((token) => {
+                fetch(`https://easygrocy.com/api/group/${group}/items`, {
+                headers: {'Authorization': 'Bearer ' + token}
+            })
+                .then((response) => {
+                    if(!response.ok) throw new Error(response.status);
+                    else return response.json();
+                })
+                .then((json) => {
+                    // console.log(json.items);
+                    let items = json.items;
+                    let new_arr = Array(items.length);
+                    for(let i in items){
+                        new_arr[i] = {key: `${i}`, text: `${items[i].name}`}
+                    }
+                    // console.log(new_arr);
+                    setListData(new_arr);
+                })
+            });
+        } else {
+            console.log("Group was NULL");
+        }
+    }
 
     const closeRow = (rowMap, rowKey) => {
         if (rowMap[rowKey]) {
@@ -50,7 +88,7 @@ const Home = () => {
             underlayColor={'#D5EEBB'}
         >
             <View>
-                <Text style={styles.itemText}>I am {data.item.text} in a SwipeListView</Text>
+                <Text style={styles.itemText}>{data.item.text}</Text>
             </View>
         </TouchableHighlight>
     );
@@ -84,7 +122,7 @@ const Home = () => {
                         <Text style={styles.modalText}>New Item:</Text>
                         
                         <TextInput
-                            onChangeText={() => console.log("EDIT")}
+                            onChangeText={(modalName) => setModalName(modalName)}
                             placeholder='name'
                             placeholderTextColor="#5F7A61"
                             style={styles.modalInputField}
@@ -108,14 +146,18 @@ const Home = () => {
                         ></TextInput> 
                         <Pressable
                             style={styles.button}
-                            onPress={() => setModalVisible(false)}
+                            onPress={() => {
+                                // setListData(listData.push({key: `${modalName}`, text: `item#${modalPrice}`}))
+                                console.log(modalName);
+                                setModalVisible(false);
+                            }}
                         >
                             <Text style={styles.textStyle}>Submit</Text>
                         </Pressable>
                     </View>
                 </View>
             </Modal>
-            <View style={{flex: 5}}>
+            <View style={{flex: 5, }}>
                 <TextInput
                     autoCapitalize='none'
                     autoCorrect={true}
@@ -136,7 +178,7 @@ const Home = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Text style={styles.screenHeader}>SQUAD_NAME - Inventory</Text>
+            <Text style={styles.screenHeader}>{squad} - Inventory</Text>
             <SwipeListView
                 style={styles.swipeList}
                 data={listData}
@@ -161,11 +203,12 @@ const styles = StyleSheet.create({
     },
     swipeList: {
         marginTop: 15,
+        backgroundColor: "#5F7A61",
     },
     rowFront: {
         alignItems: 'center',
         backgroundColor: '#7FC8A9',
-        borderBottomColor: '#5F7A61',
+        borderBottomColor: 'floralwhite',
         borderBottomWidth: 1,
         justifyContent: 'center',
         height: 80,
@@ -221,6 +264,7 @@ const styles = StyleSheet.create({
     headerView: {
         backgroundColor: "#444941",
         flexDirection: "row",
+        
     },
     newItemBtn: {
         justifyContent: "center",
