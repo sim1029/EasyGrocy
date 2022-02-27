@@ -78,7 +78,7 @@
         ```
   * Requires JWT token.
   * If `json` request is invalid, returns a HTTP `400 Bad Request`.
-* `POST`     `/api/group/join_group/<int:group_code>`
+* `POST`     `/api/group/join_group/<str:group_code>`
   * Adds the `current_user` to the group with the given `group_code`
   * Returns a `json` body with a message indicating successful joining.
   * Requires JWT token.
