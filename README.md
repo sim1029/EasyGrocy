@@ -1,6 +1,6 @@
 # EasyGrocy
 
-![EasyGrocy Icon](/assets/icon.png "EasyGrocy Icon")
+<img src="/assets/icon.png" alt="EasyGrocy Logo" width="200"/>
 
 ## Description
 
