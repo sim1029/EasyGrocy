@@ -94,7 +94,7 @@ def create_item():
     if link is not None:
         item.link = link
 
-    item.users.add(current_user)
+    item.users.append(current_user)
     db.session.add(item)
     db.session.commit()
     return jsonify(item=item.serialize())
