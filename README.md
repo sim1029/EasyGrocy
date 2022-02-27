@@ -36,4 +36,4 @@ We use React-Native in the frontend so that we could deploy the application to t
 with only one Javascript code base. We are awaiting App Store approval to put EasyGrocy in the iOS App Store.
 
 ## API Documentation
-The Flask API is fully documented, which can be found in [`backend/api.md`][https://github.com/sim1029/EasyGrocy/blob/main/backend/api.md].
+The Flask API is fully documented, which can be found in [`backend/api.md`](https://github.com/sim1029/EasyGrocy/blob/main/backend/api.md).
