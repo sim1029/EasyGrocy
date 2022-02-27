@@ -46,7 +46,7 @@ return (
       <TouchableOpacity 
         style={styles.signUpButton}
         onPress={() => {
-          fetch('http://192.168.1.159:5000/register', {
+          fetch('https://easygrocy.com/register', {
             method: "POST",
             headers: {
               Accept: 'application/json',
