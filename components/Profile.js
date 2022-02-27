@@ -1,6 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from "react";
+import localData from "./localData";
 import { 
     StyleSheet, 
     Text, 
@@ -11,11 +12,17 @@ import {
     Button,
     SafeAreaView,
  } from 'react-native';
+
 const Profile = ({navigation}) => {
     const [squad, setSquad] = useState("");
+    const {getUserId, setUserId, removeUserId} = localData();
+
+    const [username, setUsername] = useState("");
+
+    getUserId().then((id) => setUsername(id));
     return (
         <SafeAreaView style={styles.container}>
-            <Text style={styles.grocyText}>Hello, User </Text>
+            <Text style={styles.grocyText}>Hello, {username} </Text>
 
             <StatusBar style="auto" />
 
@@ -27,7 +34,12 @@ const Profile = ({navigation}) => {
           <View style={{flex: 1, height: 5, backgroundColor: 'floralwhite'}} />
           </View>
             
-            <Text style={styles.groupText}>Current Groups: dynamic groups </Text>
+            <View 
+              style={{flexDirection: "row"}}
+            >
+              <Text style={styles.groupText}>Current Group: </Text>
+              <Text style={{color: "floralwhite", fontSize: 20, marginTop: 30, marginLeft: 10}}>NONE</Text>
+            </View>
            
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
            <View>
@@ -93,9 +105,8 @@ const styles = StyleSheet.create({
       textAlign: "left",
     },
     groupText: {
-        color: "floralwhite",
+        color: "#444941",
         fontSize: 20,
-        textAlign: "left",
         marginTop: 30,
         marginBottom: 30,
 
