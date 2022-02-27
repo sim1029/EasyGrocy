@@ -3,16 +3,14 @@
 ## Auth
 * `POST`    `/login`
   * Requires `email`, `password`, fields in `json` body.
-  * Returns a `json` with `access_token` containing the unique access token.
+  * Returns a `json` with `access_token` containing the unique access token,
+  and the `user_id` of the `user` that was just logged in.
     * Ex:
 
         ```json
         {
-           response =[
-                {
-                    'access_token': 123,
-                }
-            ]
+            'access_token': 123,
+            'user_id': 321,
         }
         ```
   * If user is not found or password is incorrect returns HTTP `400 Bad Request`.
