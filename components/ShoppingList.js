@@ -201,7 +201,7 @@ const ShoppingList = ({navigation}) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Text style={styles.screenHeader}>{squad ? `${squad}- ` : ""}Grocery List</Text>
+            <Text style={styles.screenHeader}>{squad ? `${squad}- ` : ""}Grocy List</Text>
             <SwipeListView
                 style={styles.swipeList}
                 data={listData}
