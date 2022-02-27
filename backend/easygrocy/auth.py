@@ -10,7 +10,7 @@ import hashlib
 from easygrocy import app, jwt, db
 from easygrocy.models import User
 
-bp = Blueprint('auth', __name__)
+bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
 @bp.route('/login', methods=["POST"])
 def login():
