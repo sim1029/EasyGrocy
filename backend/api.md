@@ -33,7 +33,8 @@
   * If user already is registered, returns HTTP `400 Bad Request`.
   * If one or more fields isn't filled out, returns HTTP `400 Bad Request`.
 * `POST`    `/logout`
-  * Logs out user.
+  * Logs out `current_user`.
+  * Requires JWT token.
   * Returns a `json` with `message` indicating sucessful logout.
 
 ## Group
@@ -50,15 +51,18 @@
             }
         }
         ```
-  * If user making the request is not in the group, returns a HTTP `401 Unauthorized`.
+  * Requires JWT token.
+  * If `current_user` is not in the group, returns a HTTP `401 Unauthorized`.
   * If `group_id` is invalid, returns a HTTP `400 Bad Request`.
 * `PUT`     `/api/group/<int:group_id>`
   * Modifies the fields associated with the `group` with the given `group_id`.
   * Returns a `json` body with a message indicating successful modification.
-  * If user making the request is not in the group, returns a HTTP `401 Unauthorized`.
+  * Requires JWT token.
+  * If `current_user` is not in the group, returns a HTTP `401 Unauthorized`.
   * If `group_id` is invalid, returns a HTTP `400 Bad Request`.
-* `POST`     `/api/group`
+* `POST`     `/api/group/create_group`
   * Creates a new `group` with the given `name` supplied in the `json` request.
+  * Adds `current_user` to the new `group` if successful.
   * Returns a `json` body with `group` field being newly made `group`.
     * Ex:
 
@@ -70,11 +74,13 @@
             }
         }
         ```
+  * Requires JWT token.
   * If `json` request is invalid, returns a HTTP `400 Bad Request`.
-* `POST`     `/api/group/<int:group_id>/add_user/<int:user_id>`
-  * Adds the user with the given `user_id` to the group.
-  * Returns a `json` body with a message indicating successful addition.
-  * If `group_id` or `user_id` is invalid, returns a HTTP `400 Bad Request`.
+* `POST`     `/api/group/join_group/<int:group_code>`
+  * Adds the `current_user` to the group with the given `group_code`
+  * Returns a `json` body with a message indicating successful joining.
+  * Requires JWT token.
+  * If `group_code` is invalid, returns a HTTP `400 Bad Request`.
 * `GET`     `/api/group/<int:group_id>/users`
   * Returns the list of all users associated with the given `group_id`.
   * Returns a `json` body with `users` field being a list of `user` information.
@@ -91,7 +97,8 @@
             ]
         }
         ```
-  * If user is not in the group, returns HTTP `401 Unauthorized`.
+  * Requires JWT token.
+  * If `current_user` is not in the group, returns HTTP `401 Unauthorized`.
   * If `group_id` is invalid, returns a HTTP `400 Bad Request`.
 * `GET`     `/api/group/<int:group_id>/items`
   * Returns the list of all items associated with the given `group_id`.
@@ -114,7 +121,8 @@
             ]
         }
         ```
-  * If user is not in the group, returns HTTP `401 Unauthorized`.
+  * Requires JWT token.
+  * If `current_user` is not in the group, returns HTTP `401 Unauthorized`.
   * If `group_id` is invalid, returns a HTTP `400 Bad Request`.
 
 ## User
@@ -132,6 +140,7 @@
             }
         }
         ```
+  * Requires JWT token.
   * If `user_id` is invalid, returns a HTTP `400 Bad Request`.
 * `GET`     `/api/user/<int:user_id>/groups`
   * Returns all `group`s that a `user` is in.
@@ -148,11 +157,13 @@
             ]
         }
         ```
+  * Requires JWT token.
   * If `user_id` is invalid, returns a HTTP `400 Bad Request`.
 * `DELETE`     `/api/user/<int:user_id>`
   * Deletes a given user.
   * Returns a `json` body with a message indicating successful deletion.
-  * If user making the request does not match `user_id` , returns a HTTP `401 Unauthorized`.
+  * Requires JWT token.
+  * If `current_user` does not match `user_id` , returns a HTTP `401 Unauthorized`.
   * If `user_id` is invalid, returns a HTTP `400 Bad Request`.
 
 ## Item
@@ -174,10 +185,12 @@
             }
         }
         ```
+  * Requires JWT token.
   * If `item_id` is invalid, returns a HTTP `400 Bad Request`.
 * `PUT`    `/api/item/<int:item_id>`
   * Takes a `json` object that contains the fields to change:
     * Fields: `name`, `price`, `quantity`, `purchased`, `link`, `expiration` 
+  * Requires JWT token.
   * Returns a `json` body with a message indicating successful modification.
   * If `item_id` is invalid, returns a HTTP `400 Bad Request`.
 * `POST`    `/api/item/create_item`
@@ -201,9 +214,13 @@
             }
         }
         ```
+  * Requires JWT token.
+  * Associates newly created item with `current_user`.
   * If required `json` fields are not present, returns a HTTP `400 Bad Request`.
 
 * `DELETE`    `/api/item/<int:group_id>`
   * Deletes the item with given `item_id`.
   * Returns a `json` body with a message indicating successful deletion.
+  * Requires JWT token.
+  * If `current_user` is not associated with the item, returns a HTTP `401 Unauthorized`.
   * If `item_id` is invalid, returns a HTTP `400 Bad Request`.

@@ -22,13 +22,14 @@ try:
 except OSError:
     pass
 
+from . import models
+
 db.create_all()
 
-from . import models
 from . import auth
-
-from .api import group, user
+from .api import group, user, item
 
 app.register_blueprint(auth.bp)
 app.register_blueprint(group.bp)
 app.register_blueprint(user.bp)
+app.register_blueprint(item.bp)

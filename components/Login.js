@@ -40,7 +40,7 @@ return (
       <TouchableOpacity 
         style={styles.loginBtn}
         onPress={() => {
-          fetch('http://192.168.1.159:5000/login', {
+          fetch('https://easygrocy.com/login', {
             method: "POST",
             headers: {
               Accept: 'application/json',
@@ -60,9 +60,10 @@ return (
             console.log(data.access_token);
             setToken(data.access_token);
             console.log(userId);
-            navigation.navigate("GrocyStack");
+            
           })
           .catch((error) => console.error(error))
+          navigation.navigate("GrocyStack");
         }}
       >
         <Text style={styles.loginText}>Login</Text>
