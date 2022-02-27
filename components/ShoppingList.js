@@ -11,10 +11,16 @@ import {
     Pressable,
 } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
+import localData from "./localData";
+import useToken from "./useToken";
 
 const ShoppingList = () => {
     const [listData, setListData] = useState(Array(20).fill("").map((_, i) => ({key: `${i}`, text: `item#${i}`})));
     const [modalVisible, setModalVisible] = useState(false);
+    const [squad, setSquadName] = useState("");
+    const {getUserId, setUserId, removeUserId, getGroupId, getGroupName} = localData();
+
+    getGroupName().then((squad) => setSquadName(squad));
 
     const closeRow = (rowMap, rowKey) => {
         if (rowMap[rowKey]) {
@@ -135,7 +141,7 @@ const ShoppingList = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Text style={styles.screenHeader}>SQUAD_NAME - Grocery List</Text>
+            <Text style={styles.screenHeader}>{squad} - Grocery List</Text>
             <SwipeListView
                 style={styles.swipeList}
                 data={listData}

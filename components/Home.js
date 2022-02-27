@@ -9,14 +9,66 @@ import {
     TextInput,
     Pressable,
     Modal,
+    Image,
 } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import localData from "./localData";
 import useToken from "./useToken";
 
+// const staticInventory = [{
+//     key: ,
+//     name: ,
+//     price: ,
+//     quantity: 
+// },
+// {
+//     key: ,
+//     name: ,
+//     price: ,
+//     quantity: 
+// },
+// {
+//     key: ,
+//     name: ,
+//     price: ,
+//     quantity: 
+// },
+// {
+//     key: ,
+//     name: ,
+//     price: ,
+//     quantity: 
+// },
+// {
+//     key: ,
+//     name: ,
+//     price: ,
+//     quantity: 
+// },
+// {
+//     key: ,
+//     name: ,
+//     price: ,
+//     quantity: 
+// },
+// {
+//     key: ,
+//     name: ,
+//     price: ,
+//     quantity: 
+// }
+// ,{
+//     key: ,
+//     name: ,
+//     price: ,
+//     quantity: 
+// }
+
+// ]
+
 
 const Home = () => {
-    const [listData, setListData] = useState(Array(1).fill("").map((_, i) => ({key: `${i}`, text: `item#${i}`})));
+    const [listData, setListData] = useState(Array(1).fill("").map((_, i) => ({key: `${i}`, name: `banana`, price: `$4.45`, quantity: `5`})));
     const [modalVisible, setModalVisible] = useState(false);
     const [modalPrice, setModalPrice] = useState(0);
     const [modalName, setModalName] = useState("");
@@ -87,8 +139,17 @@ const Home = () => {
             style={styles.rowFront}
             underlayColor={'#D5EEBB'}
         >
-            <View>
-                <Text style={styles.itemText}>{data.item.text}</Text>
+            <View style={{flexDirection: "row", flex: 1, justifyContent: "flex-start", alignItems: "center"}}>
+                <Image 
+                    style = {styles.cellImage}
+                    source = {require("easygrocy/assets/Food/banana.png")}>
+                </Image>
+                <View style={{flexDirection: "column"}}
+                >
+                    <Text style={styles.itemText1}>{data.item.name}</Text>
+                    <Text style={styles.itemText1}>{data.item.price}</Text>
+                </View>
+                <Text style={styles.itemText1}>Qt: {data.item.quantity}</Text>
             </View>
         </TouchableHighlight>
     );
@@ -206,11 +267,12 @@ const styles = StyleSheet.create({
         backgroundColor: "#5F7A61",
     },
     rowFront: {
-        alignItems: 'center',
+        alignItems: 'flex-start',
         backgroundColor: '#7FC8A9',
         borderBottomColor: 'floralwhite',
         borderBottomWidth: 1,
         justifyContent: 'center',
+        flex: 1,
         height: 80,
     },
     rowBack: {
@@ -246,6 +308,11 @@ const styles = StyleSheet.create({
     },
     itemText: {
         color: "floralwhite"
+    },
+    itemText1: {
+        color: "floralwhite",
+        fontSize: 20,
+        marginHorizontal: 30,
     },
     searchInput: {
         height: 50,
@@ -309,6 +376,11 @@ const styles = StyleSheet.create({
         margin: 10,
         color: "#444941",
       },
+      cellImage: {
+          width: 50,
+          height: 50,
+          marginHorizontal: 50,
+      }
 });
 
 export default Home;
