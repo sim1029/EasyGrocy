@@ -21,11 +21,8 @@
 
         ```json
         {
-           response =[
-                {
-                    'access_token': 123,
-                }
-            ]
+            'access_token': 123,
+            'user_id': 321,
         }
         ```
   * If user already is registered, returns HTTP `400 Bad Request`.

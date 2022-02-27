@@ -64,7 +64,10 @@ def register():
     
     app.logger.debug('Register succeeded for user: %s', user)
     access_token = create_access_token(identity=user)
-    response = {"access_token": access_token}
+    response = jsonify({
+        "access_token": access_token,
+        "user_id": user.id,
+    })
     return response
 
 
