@@ -9,12 +9,13 @@ import {
     View, 
     Image,
     Button,
+    SafeAreaView,
  } from 'react-native';
 const Profile = ({navigation}) => {
     const [squad, setSquad] = useState("");
     return (
-        <View style={styles.container}>
-            <Text style={styles.grocyText}>Hello, dynamic bitch </Text>
+        <SafeAreaView style={styles.container}>
+            <Text style={styles.grocyText}>Hello, User </Text>
 
             <StatusBar style="auto" />
 
@@ -29,8 +30,6 @@ const Profile = ({navigation}) => {
             <Text style={styles.groupText}>Current Groups: dynamic groups </Text>
            
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <View style={{flex: 1, height: 5, backgroundColor: 'floralwhite',
-            marginTop: 10, marginBottom: 10}} />
            <View>
            </View>
            <View style={{flex: 1, height: 5, backgroundColor: 'floralwhite'}} />
@@ -39,7 +38,7 @@ const Profile = ({navigation}) => {
             <TextInput
                 style={styles.textInput}
                 placeholder="Enter Squad Code"
-                placeholderTextColor="#444941"
+                placeholderTextColor="gray"
                 setSquad={(squad) => setSquad(squad)}
                 />
             <TouchableOpacity
@@ -57,6 +56,12 @@ const Profile = ({navigation}) => {
             <View style={{flex: 1, height: 5, backgroundColor: 'floralwhite'}} />
             </View>
 
+            <Image 
+              style = {styles.logo}
+             source = {require("easygrocy/assets/icon/groceries.png")}
+            />
+            <Text style = {styles.thanksText}>Thanks for using EasyGrocy!</Text>
+
             <TouchableOpacity
             style= {styles.soBtn}
             onPress={() => {navigation.navigate("Login")}}
@@ -64,20 +69,7 @@ const Profile = ({navigation}) => {
              <Text style= {styles.loginText}>Sign Out</Text>   
             </TouchableOpacity>
 
-
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <View style={{flex: 1, height: 5, backgroundColor: 'floralwhite',
-            marginTop: 10, marginBottom: 10}} />
-            <View>
-            </View>
-             <View style={{flex: 1, height: 5, backgroundColor: 'floralwhite'}} />
-            </View>
-            <Image 
-              style = {styles.logo}
-             source = {require("easygrocy/assets/icon/groceries.png")}
-            />
-            <Text style = {styles.thanksText}>Thanks for using EasyGrocy!</Text>
-        </View>
+        </SafeAreaView>
     )
 }
 
@@ -112,12 +104,12 @@ const styles = StyleSheet.create({
         marginTop: 10,
         backgroundColor: "#D5EEBB",
         borderRadius: 30,
-        width: "80%",
+        width: "70%",
         height: 45,
         marginBottom: 20,
         marginTop: 20,
         textAlign: "center",
-        color: "black",
+        color: "#444941",
       },
       loginText: {
         color: "floralwhite",
