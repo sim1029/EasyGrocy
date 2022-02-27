@@ -15,60 +15,54 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 import localData from "./localData";
 import useToken from "./useToken";
 
-// const staticInventory = [{
-//     key: ,
-//     name: ,
-//     price: ,
-//     quantity: 
-// },
-// {
-//     key: ,
-//     name: ,
-//     price: ,
-//     quantity: 
-// },
-// {
-//     key: ,
-//     name: ,
-//     price: ,
-//     quantity: 
-// },
-// {
-//     key: ,
-//     name: ,
-//     price: ,
-//     quantity: 
-// },
-// {
-//     key: ,
-//     name: ,
-//     price: ,
-//     quantity: 
-// },
-// {
-//     key: ,
-//     name: ,
-//     price: ,
-//     quantity: 
-// },
-// {
-//     key: ,
-//     name: ,
-//     price: ,
-//     quantity: 
-// }
-// ,{
-//     key: ,
-//     name: ,
-//     price: ,
-//     quantity: 
-// }
+const staticInventory = [{
+    key: 1,
+    name: "banana",
+    price: "$4.45",
+    quantity: "5",
+    path: require("../assets/Food/banana.png")
+},
+{
+    key: 2,
+    name: "bread",
+    price: "2.99",
+    quantity: "1",
+    path: require("../assets/Food/bread.png")
+},
+{
+    key: 3,
+    name: "cheese",
+    price: "$4.99",
+    quantity: "2",
+    path: require("../assets/Food/cheese.png")
+},
+{
+    key: 4,
+    name: "apple",
+    price: "2.00",
+    quantity: "3",
+    path: require("../assets/Food/apple.png")
+},
+{
+    key: 5,
+    name: "fries",
+    price: "$3.99",
+    quantity: "1",
+    path: require("../assets/Food/fries.png")
+},
+{
+    key: 6,
+    name: "milk",
+    price: "$4.01",
+    quantity: "1",
+    path: require("../assets/Food/milk.png")
+},
 
-// ]
+]
 
 
 const Home = () => {
-    const [listData, setListData] = useState(Array(1).fill("").map((_, i) => ({key: `${i}`, name: `banana`, price: `$4.45`, quantity: `5`})));
+    const [listData, setListData] = useState(staticInventory);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalPrice, setModalPrice] = useState(0);
     const [modalName, setModalName] = useState("");
@@ -142,14 +136,16 @@ const Home = () => {
             <View style={{flexDirection: "row", flex: 1, justifyContent: "flex-start", alignItems: "center"}}>
                 <Image 
                     style = {styles.cellImage}
-                    source = {require("easygrocy/assets/Food/banana.png")}>
+                    source = {data.item.path}>
                 </Image>
                 <View style={{flexDirection: "column"}}
                 >
                     <Text style={styles.itemText1}>{data.item.name}</Text>
                     <Text style={styles.itemText1}>{data.item.price}</Text>
                 </View>
-                <Text style={styles.itemText1}>Qt: {data.item.quantity}</Text>
+                <View style={{alignItems: "flex-end"}}>
+                    <Text style={styles.itemText1}>Qt: {data.item.quantity}</Text>
+                </View>
             </View>
         </TouchableHighlight>
     );

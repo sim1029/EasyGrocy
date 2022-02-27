@@ -9,13 +9,45 @@ import {
     TextInput,
     Modal,
     Pressable,
+    Image,
 } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import localData from "./localData";
 import useToken from "./useToken";
 
+const staticInventory = [{
+    key: 0,
+    name: "bread",
+    price: "2.99",
+    quantity: "1",
+    path: require("../assets/Food/bread.png")
+},
+{
+    key: 1,
+    name: "cheese",
+    price: "$4.99",
+    quantity: "2",
+    path: require("../assets/Food/cheese.png")
+},
+{
+    key: 2,
+    name: "apple",
+    price: "2.00",
+    quantity: "3",
+    path: require("../assets/Food/apple.png")
+},
+{
+    key: 3,
+    name: "fries",
+    price: "$3.99",
+    quantity: "1",
+    path: require("../assets/Food/fries.png")
+},
+
+]
+
 const ShoppingList = () => {
-    const [listData, setListData] = useState(Array(20).fill("").map((_, i) => ({key: `${i}`, text: `item#${i}`})));
+    const [listData, setListData] = useState(staticInventory);
     const [modalVisible, setModalVisible] = useState(false);
     const [squad, setSquadName] = useState("");
     const {getUserId, setUserId, removeUserId, getGroupId, getGroupName} = localData();
@@ -53,8 +85,17 @@ const ShoppingList = () => {
             style={styles.rowFront}
             underlayColor={'#D5EEBB'}
         >
-            <View>
-                <Text style={styles.itemText}>I am {data.item.text} in a SwipeListView</Text>
+            <View style={{flexDirection: "row", flex: 1, justifyContent: "flex-start", alignItems: "center"}}>
+                <Image 
+                    style = {styles.cellImage}
+                    source = {data.item.path}>
+                </Image>
+                <View style={{flexDirection: "column"}}
+                >
+                    <Text style={styles.itemText1}>{data.item.name}</Text>
+                    <Text style={styles.itemText1}>{data.item.price}</Text>
+                </View>
+                <Text style={styles.itemText1}>Qt: {data.item.quantity}</Text>
             </View>
         </TouchableHighlight>
     );
@@ -166,13 +207,15 @@ const styles = StyleSheet.create({
     },
     swipeList: {
         marginTop: 15,
+        backgroundColor: "#5F7A61",
     },
     rowFront: {
-        alignItems: 'center',
+        alignItems: 'flex-start',
         backgroundColor: '#7FC8A9',
-        borderBottomColor: '#5F7A61',
+        borderBottomColor: 'floralwhite',
         borderBottomWidth: 1,
         justifyContent: 'center',
+        flex: 1,
         height: 80,
     },
     rowBack: {
@@ -209,6 +252,11 @@ const styles = StyleSheet.create({
     itemText: {
         color: "floralwhite"
     },
+    itemText1: {
+        color: "floralwhite",
+        fontSize: 20,
+        marginHorizontal: 30,
+    },
     searchInput: {
         height: 50,
         backgroundColor: "floralwhite",
@@ -226,6 +274,7 @@ const styles = StyleSheet.create({
     headerView: {
         backgroundColor: "#444941",
         flexDirection: "row",
+        
     },
     newItemBtn: {
         justifyContent: "center",
@@ -269,6 +318,11 @@ const styles = StyleSheet.create({
         textAlign: "center",
         margin: 10,
         color: "#444941",
+      },
+      cellImage: {
+          width: 50,
+          height: 50,
+          marginHorizontal: 50,
       }
 });
 
