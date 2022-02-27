@@ -20,42 +20,48 @@ const staticInventory = [{
     name: "banana",
     price: "$4.45",
     quantity: "5",
-    path: require("../assets/Food/banana.png")
+    path: require("../assets/Food/banana.png"),
+    username: "Liam"
 },
 {
     key: 2,
     name: "bread",
     price: "2.99",
     quantity: "1",
-    path: require("../assets/Food/bread.png")
+    path: require("../assets/Food/bread.png"),
+    username: "Simon"
 },
 {
     key: 3,
     name: "cheese",
     price: "$4.99",
     quantity: "2",
-    path: require("../assets/Food/cheese.png")
+    path: require("../assets/Food/cheese.png"),
+    username: "Harry"
 },
 {
     key: 4,
     name: "apple",
     price: "2.00",
     quantity: "3",
-    path: require("../assets/Food/apple.png")
+    path: require("../assets/Food/apple.png"),
+    username: "Trevor"
 },
 {
     key: 5,
     name: "fries",
     price: "$3.99",
     quantity: "1",
-    path: require("../assets/Food/fries.png")
+    path: require("../assets/Food/fries.png"),
+    username: "Liam"
 },
 {
     key: 6,
     name: "milk",
     price: "$4.01",
     quantity: "1",
-    path: require("../assets/Food/milk.png")
+    path: require("../assets/Food/milk.png"),
+    username: "Simon"
 },
 
 ]
@@ -143,16 +149,19 @@ const Home = ({navigation}) => {
             underlayColor={'#D5EEBB'}
         >
             <View style={{flexDirection: "row", flex: 1, justifyContent: "flex-start", alignItems: "center"}}>
-                <Image 
-                    style = {styles.cellImage}
-                    source = {data.item.path}>
-                </Image>
-                <View style={{flexDirection: "column"}}
+                <View style={{flexDirection: "column", flex: 2, justifyContent: "center", alignItems: "center"}}>
+                    <Image 
+                        style = {styles.cellImage}
+                        source = {data.item.path}>
+                    </Image>
+                    <Text style={{textAlign: "center", color: "floralwhite"}}>{data.item.username}</Text>
+                </View>
+                <View style={{flexDirection: "column", flex: 2}}
                 >
                     <Text style={styles.itemText1}>{data.item.name}</Text>
                     <Text style={styles.itemText1}>{data.item.price}</Text>
                 </View>
-                <View style={{alignItems: "flex-end"}}>
+                <View style={{alignItems: "center", flex: 2}}>
                     <Text style={styles.itemText1}>Qt: {data.item.quantity}</Text>
                 </View>
             </View>

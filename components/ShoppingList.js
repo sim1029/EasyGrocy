@@ -15,34 +15,39 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 import localData from "./localData";
 import useToken from "./useToken";
 
-const staticInventory = [{
-    key: 0,
-    name: "bread",
-    price: "2.99",
-    quantity: "1",
-    path: require("../assets/Food/bread.png")
-},
-{
-    key: 1,
-    name: "cheese",
-    price: "$4.99",
-    quantity: "2",
-    path: require("../assets/Food/cheese.png")
-},
-{
-    key: 2,
-    name: "apple",
-    price: "2.00",
-    quantity: "3",
-    path: require("../assets/Food/apple.png")
-},
-{
-    key: 3,
-    name: "fries",
-    price: "$3.99",
-    quantity: "1",
-    path: require("../assets/Food/fries.png")
-},
+const staticInventory = [
+    {
+        key: 2,
+        name: "bread",
+        price: "2.99",
+        quantity: "1",
+        path: require("../assets/Food/bread.png"),
+        username: "Simon"
+    },
+    {
+        key: 3,
+        name: "cheese",
+        price: "$4.99",
+        quantity: "2",
+        path: require("../assets/Food/cheese.png"),
+        username: "Harry"
+    },
+    {
+        key: 4,
+        name: "apple",
+        price: "2.00",
+        quantity: "3",
+        path: require("../assets/Food/apple.png"),
+        username: "Trevor"
+    },
+    {
+        key: 5,
+        name: "fries",
+        price: "$3.99",
+        quantity: "1",
+        path: require("../assets/Food/fries.png"),
+        username: "Liam"
+    },
 
 ]
 
@@ -95,16 +100,21 @@ const ShoppingList = ({navigation}) => {
             underlayColor={'#D5EEBB'}
         >
             <View style={{flexDirection: "row", flex: 1, justifyContent: "flex-start", alignItems: "center"}}>
-                <Image 
-                    style = {styles.cellImage}
-                    source = {data.item.path}>
-                </Image>
-                <View style={{flexDirection: "column"}}
+                <View style={{flexDirection: "column", flex: 2, justifyContent: "center", alignItems: "center"}}>
+                    <Image 
+                        style = {styles.cellImage}
+                        source = {data.item.path}>
+                    </Image>
+                    <Text style={{textAlign: "center", color: "floralwhite"}}>{data.item.username}</Text>
+                </View>
+                <View style={{flexDirection: "column", flex: 2}}
                 >
                     <Text style={styles.itemText1}>{data.item.name}</Text>
                     <Text style={styles.itemText1}>{data.item.price}</Text>
                 </View>
-                <Text style={styles.itemText1}>Qt: {data.item.quantity}</Text>
+                <View style={{alignItems: "center", flex: 2}}>
+                    <Text style={styles.itemText1}>Qt: {data.item.quantity}</Text>
+                </View>
             </View>
         </TouchableHighlight>
     );

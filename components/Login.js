@@ -55,9 +55,9 @@ return (
               else return response.json();
           })
           .then((json) => {
-            setToken(json.access_token);
-            setUserId("" + json.user_id);
-            console.log(json.user_id);
+            setToken(json.access_token).then(() => {
+              setUserId("" + json.user_id);
+            })
             navigation.navigate("GrocyStack");
           })
           .catch((error) => console.error(error)) 

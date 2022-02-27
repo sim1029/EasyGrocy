@@ -23,8 +23,18 @@ const Profile = ({navigation}) => {
     const [username, setUsername] = useState("");
     const [groupName, setGroupNameHook] = useState("");
 
-    getUserName().then((id) => setUsername(id));
-    getGroupName().then((name) => setGroupNameHook(name));
+    React.useEffect(() => {
+      const unsubscribe = navigation.addListener('focus', () => {
+        // The screen is focused
+        // Call any action
+        getUserName().then((id) => setUsername(id));
+        getGroupName().then((name) => setGroupNameHook(name));
+      });
+  
+      // Return the function to unsubscribe from the event so it gets removed on unmount
+      return unsubscribe;
+    }, [navigation]);
+
 
     return (
         <SafeAreaView style={styles.container}>
@@ -82,8 +92,8 @@ const Profile = ({navigation}) => {
                   // console.log(json);
                   console.log(json);
                   setGroupId("" + json.group.id);
+                  setGroupNameHook(json.group.name);
                   setGroupName(json.group.name);
-                  setSquad(json.group.name);
               }))
                 // somehow get the squad name and update it.
             }} >

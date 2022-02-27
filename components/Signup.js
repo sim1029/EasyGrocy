@@ -10,7 +10,7 @@ const Signup = ({navigation}) => {
     const [password, setPassword] = useState("");
     const [username, setUsername] = useState("");
     const {getToken, removeToken, setToken} = useToken();
-    const {getUserId, removeUserId, setUserId, setUserName, removeGroupName, removeGroupId} = localData();
+    const {getUserId, removeUserId, setUserId, setUserName, removeGroupName, removeGroupId, removeUserName} = localData();
 return (
     
     <View style={styles.container}>
@@ -64,13 +64,16 @@ return (
           .then((json) => {
             removeGroupName();
             removeGroupId();
-            setToken(json.access_token);
-            setUserName(username);
-            console.log(json.user_id);
-            setUserId("" + json.user_id);
+            removeUserName().then(() => {
+              removeUserId();
+              setToken(json.access_token);
+              setUserName(username).then(() => {
+                setUserId("" + json.user_id);
+                navigation.navigate("GrocyStack");
+              })
+            })
           })
           .catch((error) => console.error(error))
-          navigation.navigate("GrocyStack");
       }}
       >
         <Text style={styles.loginText}>Sign up</Text>
