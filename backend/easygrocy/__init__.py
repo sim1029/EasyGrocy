@@ -7,7 +7,7 @@ from flask_jwt_extended import JWTManager
 
 logging.getLogger().setLevel(logging.DEBUG)
 
-app = Flask(__name__, instance_relative_config=True)
+app = Flask(__name__, static_folder="../../web-build", instance_relative_config=True)
 
 app.config.from_mapping(SECRET_KEY='dev')
 app.config['JWT_SECRET_KEY'] = 'pen-pineapple-apple-pen-simeyson'
@@ -33,3 +33,7 @@ app.register_blueprint(auth.bp)
 app.register_blueprint(group.bp)
 app.register_blueprint(user.bp)
 app.register_blueprint(item.bp)
+
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
