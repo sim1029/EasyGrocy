@@ -7,11 +7,14 @@ import {
     TouchableHighlight,
     SafeAreaView,
     TextInput,
+    Modal,
+    Pressable,
 } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 const ShoppingList = () => {
     const [listData, setListData] = useState(Array(20).fill("").map((_, i) => ({key: `${i}`, text: `item#${i}`})));
+    const [modalVisible, setModalVisible] = useState(false);
 
     const closeRow = (rowMap, rowKey) => {
         if (rowMap[rowKey]) {
@@ -69,6 +72,45 @@ const ShoppingList = () => {
 
     const renderHeader = () => (
         <View style={styles.headerView}>
+            <View style={styles.headerView}>
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                >
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <Text style={styles.modalText}>New Item:</Text>
+                            
+                            <TextInput
+                                onChangeText={() => console.log("EDIT")}
+                                placeholder='penis'
+                                style={styles.modalInputField}
+                                autoComplete={false}
+                            >
+                            </TextInput>
+                            <TextInput
+                                onChangeText={() => console.log("EDIT")}
+                                placeholder='price'
+                                style={styles.modalInputField}
+                                keyboardType='decimal-pad'
+                            ></TextInput>   
+                            <TextInput
+                                onChangeText={() => console.log("EDIT")}
+                                placeholder='quantity'
+                                style={styles.modalInputField}
+                                keyboardType='numeric'
+                            ></TextInput> 
+                            <Pressable
+                                style={styles.button}
+                                onPress={() => setModalVisible(false)}
+                            >
+                                <Text style={styles.textStyle}>Submit</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </Modal>
+            </View>
             <View style={{flex: 5}}>
                 <TextInput
                     autoCapitalize='none'
@@ -81,7 +123,7 @@ const ShoppingList = () => {
                 />
             </View>
             <View style={{flex: 1}}>
-                <TouchableOpacity style={styles.newItemBtn} onPress={() => console.log("NewItem++")}>
+                <TouchableOpacity style={styles.newItemBtn} onPress={() => setModalVisible(true)}>
                     <Text style={styles.newItemButton}>+</Text>
                 </TouchableOpacity>
             </View>
@@ -180,6 +222,44 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      modalView: {
+        backgroundColor: "floralwhite",
+        borderRadius: 40,
+        width: 300,
+        height: 300,
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      button: {
+        borderRadius: 20,
+        width: 100,
+        height: 40,
+        backgroundColor: "#444941",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      textStyle: {
+        color: "floralwhite",
+        fontWeight: "bold",
+        textAlign: "center"
+      },
+      modalText: {
+        textAlign: "center",
+        color: "#5F7A61",
+        fontWeight: "bold",
+      },
+      modalInputField: {
+        backgroundColor: "#5F7A61",
+        width: 250,
+        height: 40,
+        textAlign: "center",
+        margin: 10,
+      }
 });
 
 export default ShoppingList;
