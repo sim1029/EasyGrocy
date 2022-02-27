@@ -7,6 +7,7 @@ import {
     TextInput,
     TouchableOpacity,
     View, 
+    Image,
     Button,
  } from 'react-native';
 const Profile = ({navigation}) => {
@@ -15,19 +16,30 @@ const Profile = ({navigation}) => {
         <View style={styles.container}>
             <Text style={styles.grocyText}>Hello, dynamic bitch </Text>
 
-            <Button onPress={() => {navigation.navigate("Login")}} title={"Back"}></Button>
-
             <StatusBar style="auto" />
 
-            <Text style = {styles.grocyText}>-----------------------</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{flex: 1, height: 5, backgroundColor: 'floralwhite',
+          marginTop: 10, marginBottom: 10}} />
+          <View>
+          </View>
+          <View style={{flex: 1, height: 5, backgroundColor: 'floralwhite'}} />
+          </View>
             
-            <Text style={styles.groupText}>Current Groups: </Text>
-            <Text style={styles.groupText}>dynamic groups</Text>
-            <Text style = {styles.grocyText}>-----------------------</Text>
+            <Text style={styles.groupText}>Current Groups: dynamic groups </Text>
+           
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flex: 1, height: 5, backgroundColor: 'floralwhite',
+            marginTop: 10, marginBottom: 10}} />
+           <View>
+           </View>
+           <View style={{flex: 1, height: 5, backgroundColor: 'floralwhite'}} />
+            </View>
+
             <TextInput
                 style={styles.textInput}
-                placeholder="Enter Existing Squad Name"
-                placeholderTextColor="#44494"
+                placeholder="Enter Squad Code"
+                placeholderTextColor="#444941"
                 setSquad={(squad) => setSquad(squad)}
                 />
             <TouchableOpacity
@@ -36,7 +48,14 @@ const Profile = ({navigation}) => {
             >
             <Text style= {styles.loginText}>Join Squad</Text>
             </TouchableOpacity>
-            <Text style = {styles.grocyText}>-----------------------</Text>
+
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flex: 1, height: 5, backgroundColor: 'floralwhite',
+            marginTop: 10, marginBottom: 10}} />
+            <View>
+            </View>
+            <View style={{flex: 1, height: 5, backgroundColor: 'floralwhite'}} />
+            </View>
 
             <TouchableOpacity
             style= {styles.soBtn}
@@ -44,7 +63,19 @@ const Profile = ({navigation}) => {
             >
              <Text style= {styles.loginText}>Sign Out</Text>   
             </TouchableOpacity>
-            <Text style = {styles.grocyText}>-----------------------</Text>
+
+
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flex: 1, height: 5, backgroundColor: 'floralwhite',
+            marginTop: 10, marginBottom: 10}} />
+            <View>
+            </View>
+             <View style={{flex: 1, height: 5, backgroundColor: 'floralwhite'}} />
+            </View>
+            <Image 
+              style = {styles.logo}
+             source = {require("easygrocy/assets/icon/groceries.png")}
+            />
             <Text style = {styles.thanksText}>Thanks for using EasyGrocy!</Text>
         </View>
     )
@@ -57,18 +88,23 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
     },
+    logo: {
+      height: 75,
+      width: 75,
+      marginTop: 20,
+    },
     grocyText: {
       color: "floralwhite",
       fontSize: 40,
-      marginBottom: 10,
+      marginBottom: 30,
      // marginTop: 20,
       textAlign: "left",
     },
     groupText: {
-        color: "#444941",
+        color: "floralwhite",
         fontSize: 20,
         textAlign: "left",
-        marginTop: 10,
+        marginTop: 30,
         marginBottom: 30,
 
     },
@@ -79,11 +115,12 @@ const styles = StyleSheet.create({
         width: "80%",
         height: 45,
         marginBottom: 20,
+        marginTop: 20,
         textAlign: "center",
         color: "black",
       },
       loginText: {
-        color: "black",
+        color: "floralwhite",
         fontSize: 20,
       },
       loginBtn: {
@@ -92,8 +129,8 @@ const styles = StyleSheet.create({
         height: 50,
         alignItems: "center",
         justifyContent: "center",
-        marginTop: 10,
-        backgroundColor: "#5F7A61",
+        marginTop: 20,
+        backgroundColor: "floralwhite",
     },
     soBtn: {
         width: "80%",
@@ -101,8 +138,8 @@ const styles = StyleSheet.create({
         height: 50,
         alignItems: "center",
         justifyContent: "center",
-        marginTop: 10,
-        marginBottom: 10,
+        marginTop: 25,
+        marginBottom: 25,
         backgroundColor: "#5F7A61",
     },
     joinBtn: {
@@ -112,11 +149,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         marginTop: 0,
+        marginBottom: 20,
         backgroundColor: "#5F7A61",
     },
     thanksText: {
         color: "floralwhite",
       fontSize: 20,
+      marginTop: 20,
       textAlign: "center",
     },
 });
