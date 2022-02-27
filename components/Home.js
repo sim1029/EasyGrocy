@@ -16,12 +16,12 @@ import useToken from "./useToken";
 
 
 const Home = () => {
-    // const [listData, setListData] = useState(Array(1).fill("").map((_, i) => ({key: `${i}`, text: `item#${i}`})));
+    const [listData, setListData] = useState(Array(1).fill("").map((_, i) => ({key: `${i}`, text: `item#${i}`})));
     const [modalVisible, setModalVisible] = useState(false);
     const [modalPrice, setModalPrice] = useState(0);
     const [modalName, setModalName] = useState("");
     const [squad, setSquadName] = useState("");
-    const [listData, setListData] = useState(Array());
+    // const [listData, setListData] = useState(Array());
     const {getToken, removeToken, setToken} = useToken();
     const {getUserId, setUserId, removeUserId, getGroupId, getGroupName} = localData();
 
@@ -55,8 +55,6 @@ const Home = () => {
             console.log("Group was NULL");
         }
     }
-
-    getItems();
 
     const closeRow = (rowMap, rowKey) => {
         if (rowMap[rowKey]) {
