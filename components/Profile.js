@@ -27,7 +27,12 @@ const Profile = ({navigation}) => {
           <View style={{flex: 1, height: 5, backgroundColor: 'floralwhite'}} />
           </View>
             
-            <Text style={styles.groupText}>Current Groups: dynamic groups </Text>
+            <View 
+              style={{flexDirection: "row"}}
+            >
+              <Text style={styles.groupText}>Current Group: </Text>
+              <Text style={{color: "floralwhite", fontSize: 20, marginTop: 30, marginLeft: 10}}>MyGroup</Text>
+            </View>
            
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
            <View>
@@ -93,9 +98,8 @@ const styles = StyleSheet.create({
       textAlign: "left",
     },
     groupText: {
-        color: "floralwhite",
+        color: "#444941",
         fontSize: 20,
-        textAlign: "left",
         marginTop: 30,
         marginBottom: 30,
 
