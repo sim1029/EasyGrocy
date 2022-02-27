@@ -48,6 +48,7 @@
             group={
                 'id': 1,
                 'name': 'OurHouse',
+                'code': 'aZjkA12D',
             }
         }
         ```
@@ -71,6 +72,7 @@
             group={
                 'id': 1,
                 'name': 'OurSquad',
+                'code': 'aZjkA12D',
             }
         }
         ```
