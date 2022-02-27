@@ -6,12 +6,11 @@ import useToken from "./useToken";
 import localData from "./localData";
 
 const Signup = ({navigation}) => {
-    const [email, setEmail] = useState("u4@gmail.com");
+    const [email, setEmail] = useState("u1@gmail.com");
     const [password, setPassword] = useState("pass");
-    const [username, setUsername] = useState("u4");
-    const [data, setData] = useState([]);
-    const {token, removeToken, setToken} = useToken();
-    const {currGroup, removeCurrGroup, setCurrGroup, userId, removeUserId, setUserId} = localData();
+    const [username, setUsername] = useState("u1");
+    const {getToken, removeToken, setToken} = useToken();
+    const {getUserId, removeUserId, setUserId} = localData();
 return (
     
     <View style={styles.container}>
@@ -63,10 +62,7 @@ return (
             else return response.json();
           })
           .then((json) => {
-            setData(json);
-            // console.log(data.access_token);
-            setToken(data.access_token);
-            // console.log(username);
+            setToken(json.access_token);
             setUserId(username);
             navigation.navigate("GrocyStack");
           })

@@ -3,78 +3,38 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const localData = () => {
 
-    const getCurrentGroup = async () => {
-        try {
-            const userCurrGroup = await AsyncStorage.getItem('currGroup');
-            if(userCurrGroup !== null) {
-                // value previously stored
-                return userCurrGroup;
-            }
-        } catch(e) {
-            console.log("Error fetching currGroup: ", e);
-        }
-    }
-
-    const [currGroup, setCurrentGroup] = useState(getCurrentGroup());
-
-    const saveCurrentGroup = async (userCurrGroup) => {
-        try {
-            await AsyncStorage.setItem('currGroup', userCurrGroup);
-        } catch (e) {
-            console.log("Error saving currGroup: ", e);
-        }
-        setCurrentGroup(userCurrGroup);
-    };
-
-    const removeCurrentGroup = async () => {
-        try {
-            await AsyncStorage.removeItem('currGroup');
-        } catch(e) {
-            // remove error
-            console.log("Error removing currGroup: ", e);
-        }
-        setCurrGroup(null);
-    }
-
+    
     const getUserId = async () => {
         try {
-            const userId = await AsyncStorage.getItem('userId');
-            if(userId !== null) {
-                // value previously stored
-                return userId;
-            }
+            return await AsyncStorage.getItem('userId');
         } catch(e) {
-            console.log("Error fetching userID: ", e);
+            // read error
+            console.error(e);
+        }
+  
+    }
+
+    const setUserId = async (userId) => {
+        try {
+            await AsyncStorage.setItem('userId', userId)
+        } catch(e) {
+            // save error
+            console.error(e);
         }
     }
 
-    const [userId, setUserId] = useState(getUserId());
-
-    const saveUserId = async (userId) => {
+    const removeUserId = async (userId) => {
         try {
-            await AsyncStorage.setItem('userId', userId);
-        } catch (e) {
-            console.log("Error saving userId: ", e);
-        }
-        setUserId(userId);
-    };
-
-    const removeUserId = async () => {
-        try {
-            await AsyncStorage.removeItem('userId');
-        } catch(e) {
+            await AsyncStorage.removeItem('@MyApp_key')
+          } catch(e) {
             // remove error
-            console.log("Error removing userId: ", e);
-        }
-        setUserId(null);
+            console.error(e);
+          }
     }
 
     return {
-        setCurrentGroup: saveCurrentGroup,
-        currGroup,
-        removeCurrentGroup,
-        setUserId: saveUserId,
-        userId,
+        getUserId,
+        setUserId,
         removeUserId,
     }
 
