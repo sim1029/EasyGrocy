@@ -46,13 +46,22 @@ const staticInventory = [{
 
 ]
 
-const ShoppingList = () => {
+const ShoppingList = ({navigation}) => {
     const [listData, setListData] = useState(staticInventory);
     const [modalVisible, setModalVisible] = useState(false);
     const [squad, setSquadName] = useState("");
     const {getUserId, setUserId, removeUserId, getGroupId, getGroupName} = localData();
 
-    getGroupName().then((squad) => setSquadName(squad));
+    React.useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+          // The screen is focused
+          // Call any action
+          getGroupName().then((squad) => setSquadName(squad));
+        });
+    
+        // Return the function to unsubscribe from the event so it gets removed on unmount
+        return unsubscribe;
+      }, [navigation]);
 
     const closeRow = (rowMap, rowKey) => {
         if (rowMap[rowKey]) {
@@ -182,7 +191,7 @@ const ShoppingList = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Text style={styles.screenHeader}>{squad} - Grocery List</Text>
+            <Text style={styles.screenHeader}>{squad ? `${squad}- ` : ""}Grocery List</Text>
             <SwipeListView
                 style={styles.swipeList}
                 data={listData}

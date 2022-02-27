@@ -8,8 +8,8 @@ import useToken from "./useToken";
 import localData from "./localData";
 
 const Login = ({navigation}) => {
-    const [email, setEmail] = useState("u2@gmail.com");
-    const [password, setPassword] = useState("pass");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const {getToken, removeToken, setToken} = useToken();
     const {getUserId, setUserId, removeUserId} = localData();
 return (
@@ -39,7 +39,7 @@ return (
       <TouchableOpacity 
         style={styles.loginBtn}
         onPress={() => {
-          fetch('https://easygrocy.com/login', {
+          fetch('https://easygrocy.com/api/auth/login', {
             method: "POST",
             headers: {
               Accept: 'application/json',

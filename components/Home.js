@@ -61,7 +61,7 @@ const staticInventory = [{
 ]
 
 
-const Home = () => {
+const Home = ({navigation}) => {
     const [listData, setListData] = useState(staticInventory);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalPrice, setModalPrice] = useState(0);
@@ -71,7 +71,16 @@ const Home = () => {
     const {getToken, removeToken, setToken} = useToken();
     const {getUserId, setUserId, removeUserId, getGroupId, getGroupName} = localData();
 
-    getGroupName().then((squad) => setSquadName(squad));
+    React.useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+          // The screen is focused
+          // Call any action
+          getGroupName().then((squad) => setSquadName(squad));
+        });
+    
+        // Return the function to unsubscribe from the event so it gets removed on unmount
+        return unsubscribe;
+      }, [navigation]);
 
     const getItems = async () => {
         // getUserId().then((id) => console.log(id));
@@ -235,7 +244,7 @@ const Home = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Text style={styles.screenHeader}>{squad} - Inventory</Text>
+            <Text style={styles.screenHeader}>{squad ? `${squad} - ` : ""}Inventory</Text>
             <SwipeListView
                 style={styles.swipeList}
                 data={listData}

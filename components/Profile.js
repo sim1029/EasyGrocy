@@ -16,7 +16,7 @@ import {
 
 const Profile = ({navigation}) => {
     const [squad, setSquad] = useState("");
-    const [code, setCode] = useState("gX7crAqZ");
+    const [code, setCode] = useState("");
     const {getUserId, setUserId, removeUserId, setGroupName, getGroupName, setGroupId, getUserName} = localData();
     const {getToken} = useToken();
 
@@ -81,22 +81,9 @@ const Profile = ({navigation}) => {
               .then((json) => {
                   // console.log(json);
                   console.log(json);
-                  getUserId().then((id) => fetch(`https://easygrocy.com/api/user/${id}/groups`, {
-                    headers: {'Authorization': 'Bearer ' + token}
-                  }))
-                  .then((response) => {
-                    if(!response.ok) {
-                      throw new Error(response.status);
-                    }
-                    else return response.json();
-                  })
-                  .then((json) => {
-                    console.log(json);
-                    setGroupId("" + json.groups[0].id);
-                    setGroupName(json.groups[0].name);
-                    // console.log(json.groups[0].id)
-                    // console.log(json.groups[0].name)
-                  });
+                  setGroupId("" + json.group.id);
+                  setGroupName(json.group.name);
+                  setSquad(json.group.name);
               }))
                 // somehow get the squad name and update it.
             }} >

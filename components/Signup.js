@@ -6,9 +6,9 @@ import useToken from "./useToken";
 import localData from "./localData";
 
 const Signup = ({navigation}) => {
-    const [email, setEmail] = useState("u2@gmail.com");
-    const [password, setPassword] = useState("pass");
-    const [username, setUsername] = useState("u2");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [username, setUsername] = useState("");
     const {getToken, removeToken, setToken} = useToken();
     const {getUserId, removeUserId, setUserId, setUserName, removeGroupName, removeGroupId} = localData();
 return (
@@ -45,7 +45,7 @@ return (
       <TouchableOpacity 
         style={styles.signUpButton}
         onPress={() => {
-          fetch('https://easygrocy.com/register', {
+          fetch('https://easygrocy.com/api/auth/register', {
             method: "POST",
             headers: {
               Accept: 'application/json',
@@ -62,13 +62,15 @@ return (
             else return response.json();
           })
           .then((json) => {
-            setToken(json.access_token);
-            setUserName(username);
             removeGroupName();
             removeGroupId();
-            navigation.navigate("GrocyStack");
+            setToken(json.access_token);
+            setUserName(username);
+            console.log(json.user_id);
+            setUserId("" + json.user_id);
           })
           .catch((error) => console.error(error))
+          navigation.navigate("GrocyStack");
       }}
       >
         <Text style={styles.loginText}>Sign up</Text>
