@@ -3,16 +3,14 @@
 ## Auth
 * `POST`    `/login`
   * Requires `email`, `password`, fields in `json` body.
-  * Returns a `json` with `access_token` containing the unique access token.
+  * Returns a `json` with `access_token` containing the unique access token,
+  and the `user_id` of the `user` that was just logged in.
     * Ex:
 
         ```json
         {
-           response =[
-                {
-                    'access_token': 123,
-                }
-            ]
+            'access_token': 123,
+            'user_id': 321,
         }
         ```
   * If user is not found or password is incorrect returns HTTP `400 Bad Request`.
@@ -78,9 +76,9 @@
         ```
   * Requires JWT token.
   * If `json` request is invalid, returns a HTTP `400 Bad Request`.
-* `POST`     `/api/group/join_group/<int:group_code>`
+* `POST`     `/api/group/join_group/<str:group_code>`
   * Adds the `current_user` to the group with the given `group_code`
-  * Returns a `json` body with a message indicating successful joining.
+  * Returns a `json` body with `group` field being the `group` that was just joined.
   * Requires JWT token.
   * If `group_code` is invalid, returns a HTTP `400 Bad Request`.
 * `GET`     `/api/group/<int:group_id>/users`
