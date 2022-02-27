@@ -185,8 +185,8 @@ const Home = ({navigation}) => {
         </View>
     );
 
-    const renderHeader = () => (
-        <View style={styles.headerView}>
+    const Header = () => (
+        <View style={styles.headerView}> 
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -254,6 +254,7 @@ const Home = ({navigation}) => {
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.screenHeader}>{squad ? `${squad} - ` : ""}Inventory</Text>
+            <Header></Header>
             <SwipeListView
                 style={styles.swipeList}
                 data={listData}
@@ -264,8 +265,6 @@ const Home = ({navigation}) => {
                 previewRowKey={'0'}
                 previewOpenValue={-75}
                 previewOpenDelay={3000}
-                ListHeaderComponent={renderHeader}
-                stickyHeaderIndices={[0]}
             />
         </SafeAreaView>
     );
@@ -277,7 +276,6 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     swipeList: {
-        marginTop: 15,
         backgroundColor: "#5F7A61",
     },
     rowFront: {
@@ -337,6 +335,7 @@ const styles = StyleSheet.create({
         color: "floralwhite",
         textAlign: "center",
         fontSize: 20,
+        marginBottom: 20,
     },
     newItemButton: {
         color: "floralwhite",
@@ -345,7 +344,6 @@ const styles = StyleSheet.create({
     headerView: {
         backgroundColor: "#444941",
         flexDirection: "row",
-        
     },
     newItemBtn: {
         justifyContent: "center",
