@@ -80,7 +80,7 @@
   * If `json` request is invalid, returns a HTTP `400 Bad Request`.
 * `POST`     `/api/group/join_group/<str:group_code>`
   * Adds the `current_user` to the group with the given `group_code`
-  * Returns a `json` body with a message indicating successful joining.
+  * Returns a `json` body with `group` field being the `group` that was just joined.
   * Requires JWT token.
   * If `group_code` is invalid, returns a HTTP `400 Bad Request`.
 * `GET`     `/api/group/<int:group_id>/users`
