@@ -9,22 +9,59 @@ const Signup = ({navigation}) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [username, setUsername] = useState("");
-    const {getToken, removeToken, setToken} = useToken();
-    const {getUserId, removeUserId, setUserId, setUserName, removeGroupName, removeGroupId, removeUserName} = localData();
+    const {setToken} = useToken();
+    const {removeUserId, setUserId, setUserName, removeGroupName, removeGroupId, removeUserName} = localData();
+
+    const signUpUser = () => {
+      fetch('https://easygrocy.com/api/auth/register', {
+        method: "POST",
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: username,
+          email: email,
+          password: password
+        })
+      })
+      .then((response) => {
+        if(!response.ok) throw new Error(response.status);
+        else return response.json();
+      })
+      .then((json) => {
+        removeGroupName().then(() => {
+          removeGroupId().then(() => {
+            removeUserName().then(() => {
+              removeUserId().then(() => {
+                setToken(json.access_token).then(() => {
+                  setUserName(username).then(() => {
+                    setUserId("" + json.user_id);
+                    navigation.navigate("GrocyStack");
+                  })
+                })
+              })
+            })
+          })
+        })
+      })
+      .catch((error) => console.error(error))
+  }
+
 return (
     
-    <View style={styles.container}>
+    <View style={styles.rootContainer}>
       <Text style={styles.grocyTextHeader}>Sign up</Text>
       <StatusBar style= "auto" />
       <TextInput
-        style={styles.TextInput}
+        style={styles.userInput}
         placeholder="Username"
         placeholderTextColor="#444941"
         onChangeText={(username) => setUsername(username)}
         value={username}
       />
       <TextInput
-        style={styles.TextInput}
+        style={styles.userInput}
         placeholder="Email"
         placeholderTextColor="#444941"
         onChangeText={(email) => setEmail(email)}
@@ -34,7 +71,7 @@ return (
         keyboardType={"email-address"}
       />
       <TextInput
-        style={styles.TextInput}
+        style={styles.userInput}
         placeholder="Password"
         placeholderTextColor="#444941"
         secureTextEntry={true}
@@ -44,37 +81,7 @@ return (
       
       <TouchableOpacity 
         style={styles.signUpButton}
-        onPress={() => {
-          fetch('https://easygrocy.com/api/auth/register', {
-            method: "POST",
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              name: username,
-              email: email,
-              password: password
-            })
-          })
-          .then((response) => {
-            if(!response.ok) throw new Error(response.status);
-            else return response.json();
-          })
-          .then((json) => {
-            removeGroupName();
-            removeGroupId();
-            removeUserName().then(() => {
-              removeUserId();
-              setToken(json.access_token);
-              setUserName(username).then(() => {
-                setUserId("" + json.user_id);
-                navigation.navigate("GrocyStack");
-              })
-            })
-          })
-          .catch((error) => console.error(error))
-      }}
+        onPress={() => signUpUser()}
       >
         <Text style={styles.loginText}>Sign up</Text>
       </TouchableOpacity>
@@ -89,22 +96,22 @@ return (
 }
 
 const styles = StyleSheet.create({
-  container: {
+  rootContainer: {
     flex: 1,
     backgroundColor: '#7FC8A9',
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
-  TextInput: {
+  userInput: {
     backgroundColor: "#D5EEBB",
     borderRadius: 30,
-    width: "80%",
+    width: 300,
     height: 45,
     marginBottom: 20,
     textAlign: "center",
   },
   signUpButton: {
-    width: "80%",
+    width: 300,
     borderRadius: 25,
     height: 50,
     alignItems: "center",
