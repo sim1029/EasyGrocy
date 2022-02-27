@@ -3,6 +3,7 @@ from easygrocy import db
 class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
+    code = db.Column(db.Text, nullable=False)
 
     def __repr__(self):
         return '<Group %r>' % self.name
@@ -10,6 +11,6 @@ class Group(db.Model):
     def serialize(self):
         return {
             'id': self.id,
-            'email': self.email,
             'name': self.name,
+            'code': self.code,
         }

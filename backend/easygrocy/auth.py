@@ -37,13 +37,6 @@ def login():
     return response
 
 
-@bp.route('/logout', methods=["POST"])
-def logout():
-    app.logger.debug('Logging out user: %s', current_user)
-    unset_jwt_cookies(response=jsonify({"message": "Logout successful."}))
-    return response
-
-
 @bp.route('/register', methods=["POST"])
 def register():
     json = request.get_json()
@@ -69,6 +62,14 @@ def register():
     app.logger.debug('Register succeeded for user: %s', user)
     access_token = create_access_token(identity=user)
     response = {"access_token": access_token}
+    return response
+
+
+@bp.route('/logout', methods=["POST"])
+@jwt_required()
+def logout():
+    app.logger.debug('Logging out user: %s', current_user)
+    unset_jwt_cookies(response=jsonify({"message": "Logout successful."}))
     return response
 
 

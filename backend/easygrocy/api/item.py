@@ -12,6 +12,7 @@ bp = Blueprint('item', __name__, url_prefix='/api/item')
 
 
 @bp.route('<int:item_id>', methods=["GET", "PUT", "DELETE"])
+@jwt_required()
 def get_item(item_id):
     item = Item.query.filter_by(id=item_id).first()
     if item is None:
@@ -63,6 +64,7 @@ def get_item(item_id):
 
 
 @bp.route('/create_item', methods=["POST"])
+@jwt_required()
 def create_item():
     json = request.get_json()
     name = json.get("name")
@@ -92,8 +94,7 @@ def create_item():
     if link is not None:
         item.link = link
 
+    item.users.add(current_user)
     db.session.add(item)
     db.session.commit()
     return jsonify(item=item.serialize())
-
-    # create item
