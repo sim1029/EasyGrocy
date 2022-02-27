@@ -51,7 +51,7 @@ def create_group():
     db.session.commit()
     return jsonify(group=group.serialize())
 
-@bp.route('join_group/<int:group_code>', methods=["POST"])
+@bp.route('join_group/<str:group_code>', methods=["POST"])
 @jwt_required()
 def join_group(group_code):
     group = Group.query.filter_by(code=group_code).first()
