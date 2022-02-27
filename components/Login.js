@@ -60,10 +60,9 @@ return (
             console.log(data.access_token);
             setToken(data.access_token);
             console.log(userId);
-            
+            navigation.navigate("GrocyStack");
           })
           .catch((error) => console.error(error))
-          navigation.navigate("GrocyStack");
         }}
       >
         <Text style={styles.loginText}>Login</Text>
