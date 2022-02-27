@@ -60,7 +60,7 @@ def join_group(group_code):
     group.users.append(current_user)
     db.session.add(group)
     db.session.commit()
-    return json_message("User successfully joined the group!")
+    return jsonify(group=group.serialize())
 
 @bp.route('<int:group_id>/users', methods=["GET"])
 @jwt_required()
