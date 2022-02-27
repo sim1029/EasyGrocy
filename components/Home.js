@@ -16,6 +16,7 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 const Home = () => {
     const [listData, setListData] = useState(Array(20).fill("").map((_, i) => ({key: `${i}`, text: `item#${i}`})));
     const [modalVisible, setModalVisible] = useState(false);
+    const [modalPrice, setModalPrice] = useState(0.0);
 
     const closeRow = (rowMap, rowKey) => {
         if (rowMap[rowKey]) {
@@ -84,20 +85,24 @@ const Home = () => {
                         
                         <TextInput
                             onChangeText={() => console.log("EDIT")}
-                            placeholder='penis'
+                            placeholder='name'
+                            placeholderTextColor="#5F7A61"
                             style={styles.modalInputField}
                             autoComplete={false}
                         >
                         </TextInput>
                         <TextInput
-                            onChangeText={() => console.log("EDIT")}
-                            placeholder='price'
+                            placeholder={`price: $${modalPrice}`}
+                            placeholderTextColor="#5F7A61"
                             style={styles.modalInputField}
                             keyboardType='decimal-pad'
+                            // value={"$" + modalPrice}
+                            // onChangeText={(modalPrice) => setModalPrice(modalPrice)}
                         ></TextInput>   
                         <TextInput
                             onChangeText={() => console.log("EDIT")}
                             placeholder='quantity'
+                            placeholderTextColor="#5F7A61"
                             style={styles.modalInputField}
                             keyboardType='numeric'
                         ></TextInput> 
@@ -253,11 +258,12 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
       },
       modalInputField: {
-        backgroundColor: "#5F7A61",
+        backgroundColor: "#D5EEBB",
         width: 250,
         height: 40,
         textAlign: "center",
         margin: 10,
+        color: "#444941",
       },
 });
 

@@ -84,7 +84,8 @@ const ShoppingList = () => {
                             
                             <TextInput
                                 onChangeText={() => console.log("EDIT")}
-                                placeholder='penis'
+                                placeholder='name'
+                                placeholderTextColor="#5F7A61"
                                 style={styles.modalInputField}
                                 autoComplete={false}
                             >
@@ -92,12 +93,14 @@ const ShoppingList = () => {
                             <TextInput
                                 onChangeText={() => console.log("EDIT")}
                                 placeholder='price'
+                                placeholderTextColor="#5F7A61"
                                 style={styles.modalInputField}
                                 keyboardType='decimal-pad'
                             ></TextInput>   
                             <TextInput
                                 onChangeText={() => console.log("EDIT")}
                                 placeholder='quantity'
+                                placeholderTextColor="#5F7A61"
                                 style={styles.modalInputField}
                                 keyboardType='numeric'
                             ></TextInput> 
@@ -254,11 +257,12 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
       },
       modalInputField: {
-        backgroundColor: "#5F7A61",
+        backgroundColor: "#D5EEBB",
         width: 250,
         height: 40,
         textAlign: "center",
         margin: 10,
+        color: "#444941",
       }
 });
 
