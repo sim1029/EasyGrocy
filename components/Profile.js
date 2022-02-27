@@ -2,6 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from "react";
 import localData from "./localData";
+import useToken from "./useToken";
 import { 
     StyleSheet, 
     Text, 
@@ -15,11 +16,16 @@ import {
 
 const Profile = ({navigation}) => {
     const [squad, setSquad] = useState("");
-    const {getUserId, setUserId, removeUserId} = localData();
+    const [code, setCode] = useState("gX7crAqZ");
+    const {getUserId, setUserId, removeUserId, setGroupName, getGroupName, setGroupId, getUserName} = localData();
+    const {getToken} = useToken();
 
     const [username, setUsername] = useState("");
+    const [groupName, setGroupNameHook] = useState("");
 
-    getUserId().then((id) => setUsername(id));
+    getUserName().then((id) => setUsername(id));
+    getGroupName().then((name) => setGroupNameHook(name));
+
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.grocyText}>Hello, {username} </Text>
@@ -37,8 +43,8 @@ const Profile = ({navigation}) => {
             <View 
               style={{flexDirection: "row"}}
             >
-              <Text style={styles.groupText}>Current Group: </Text>
-              <Text style={{color: "floralwhite", fontSize: 20, marginTop: 30, marginLeft: 10}}>NONE</Text>
+              <Text style={styles.groupText}>Current Squad: </Text>
+              <Text style={{color: "floralwhite", fontSize: 20, marginTop: 30, marginLeft: 10}}>{groupName}</Text>
             </View>
            
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -47,16 +53,53 @@ const Profile = ({navigation}) => {
            <View style={{flex: 1, height: 5, backgroundColor: 'floralwhite'}} />
             </View>
 
+            {/* <TextInput
+                style={styles.textInput}
+                placeholder="Enter Squad Name"
+                placeholderTextColor="gray"
+                onChangeText={(squad) => setSquad(squad)}
+                /> */}
             <TextInput
                 style={styles.textInput}
                 placeholder="Enter Squad Code"
                 placeholderTextColor="gray"
-                setSquad={(squad) => setSquad(squad)}
+                onChangeText={(code) => setCode(code)}
+                // value={"gX7crAqZ"}
                 />
             <TouchableOpacity
             style={styles.joinBtn}
-            //onPress={() => {navigation.navigate("")}}
-            >
+            onPress={() => {
+              console.log(code);
+              getToken().then((token) => fetch(`https://easygrocy.com/api/group/join_group/${code}`, {
+                method: "POST",
+                headers: {'Authorization': 'Bearer ' + token}
+              })
+              .then((response) => {
+                if(!response.ok) throw new Error(response.status)
+                else return response.json();
+              })
+              .then((json) => {
+                  // console.log(json);
+                  console.log(json);
+                  getUserId().then((id) => fetch(`https://easygrocy.com/api/user/${id}/groups`, {
+                    headers: {'Authorization': 'Bearer ' + token}
+                  }))
+                  .then((response) => {
+                    if(!response.ok) {
+                      throw new Error(response.status);
+                    }
+                    else return response.json();
+                  })
+                  .then((json) => {
+                    console.log(json);
+                    setGroupId("" + json.groups[0].id);
+                    setGroupName(json.groups[0].name);
+                    // console.log(json.groups[0].id)
+                    // console.log(json.groups[0].name)
+                  });
+              }))
+                // somehow get the squad name and update it.
+            }} >
             <Text style= {styles.loginText}>Join Squad</Text>
             </TouchableOpacity>
 
@@ -112,15 +155,14 @@ const styles = StyleSheet.create({
 
     },
     textInput: {
-        marginTop: 10,
         backgroundColor: "#D5EEBB",
         borderRadius: 30,
         width: "70%",
         height: 45,
-        marginBottom: 20,
-        marginTop: 20,
         textAlign: "center",
         color: "#444941",
+        marginBottom: 10,
+        marginTop: 10,
       },
       loginText: {
         color: "floralwhite",
@@ -151,7 +193,7 @@ const styles = StyleSheet.create({
         height: 50,
         alignItems: "center",
         justifyContent: "center",
-        marginTop: 0,
+        marginTop: 10,
         marginBottom: 20,
         backgroundColor: "#5F7A61",
     },
