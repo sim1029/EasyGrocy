@@ -110,7 +110,7 @@ const Profile = ({navigation}) => {
 
             <Image 
               style = {styles.logo}
-             source = {require("easygrocy/assets/icon/groceries.png")}
+             source = {require("../assets/icon/groceries.png")}
             />
             <Text style = {styles.thanksText}>Thanks for using EasyGrocy!</Text>
 

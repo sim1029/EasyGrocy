@@ -29,4 +29,5 @@ class Item(db.Model):
             serialized['expiration'] = self.expiration.isoformat()
         if self.link is not None:
             serialized['link'] = self.link
+        serialized['users'] = [u.serialize() for u in self.users]
         return serialized
