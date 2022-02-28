@@ -15,6 +15,7 @@ const Login = ({navigation}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [userId, setUserIdHook] = useState("");
+<<<<<<< HEAD
   const [token, setTokenHook] = useState("");
   const {setToken, getToken} = useToken();
   const {setUserId, getUserId, removeGroupName, removeGroupId, removeUserName, removeUserId, setUserName, setGroupId} = localData();
@@ -58,13 +59,50 @@ const Login = ({navigation}) => {
         })
       })
     }) 
+=======
+  const {setToken} = useToken();
+  const {setUserId, getUserId} = localData();
+
+  const loginUser = async () => {
+    fetch('https://easygrocy.com/api/auth/login', {
+          method: "POST",
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password
+          })
+        })
+        .then((response) => {
+            if(!response.ok) throw new Error(response.status);
+            else return response.json();
+        })
+        .then((json) => {
+          setToken(json.access_token)
+          .then(() => {
+            setUserId("" + json.user_id).then(() => {
+              // getUserGroups().then(() => {
+                navigation.navigate("GrocyStack");
+              // })
+            });
+          })
+        })
+        .catch((error) => console.error(error)) 
+>>>>>>> a546eee61e56ade61f5ad8f0ecbdc2ac9f9c4ca9
   }
 
   const getUserGroups = async () => {
     getUserId().then((id) => {
       setUserIdHook(id);
+<<<<<<< HEAD
       fetch(`https://easygrocy.com/api/user/${userId}/groups`, {
         method: "GET",
+=======
+      fetch(`https://easygrocy.com/api/user/${userID}/groups`, {
+        method: "POST",
+>>>>>>> a546eee61e56ade61f5ad8f0ecbdc2ac9f9c4ca9
         headers: {'Authorization': 'Bearer ' + token}
       })
       .then((response) => {
@@ -73,15 +111,23 @@ const Login = ({navigation}) => {
       })
       .then((json) => {
           // console.log(json);
+<<<<<<< HEAD
           const groups = json.groups;
           if (groups) {
             setGroupId("" + groups[0].id);
             setGroupName(groups[0].name);
           }
+=======
+          console.log(json);
+          setGroupId("" + json.group.id);
+          setGroupNameHook(json.group.name);
+          setGroupName(json.group.name);
+>>>>>>> a546eee61e56ade61f5ad8f0ecbdc2ac9f9c4ca9
       })
     })
   }
 
+<<<<<<< HEAD
   const getUserName = async () => {
     fetch(`https://easygrocy.com/api/user/${userId}`, {
       method: "GET",
@@ -97,6 +143,8 @@ const Login = ({navigation}) => {
     })
   }
 
+=======
+>>>>>>> a546eee61e56ade61f5ad8f0ecbdc2ac9f9c4ca9
   return (
     <View style={styles.rootContainer}>
       <Text style={styles.grocyTextHeader}>Login</Text>

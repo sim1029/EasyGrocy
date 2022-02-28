@@ -13,6 +13,8 @@ web-build/
 tags*
 
 backend/instance
+*.sqlite
+backend/notes.txt
 
 # macOS
 .DS_Store

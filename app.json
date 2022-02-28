@@ -7,7 +7,11 @@
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
+<<<<<<< HEAD
       "resizeMode": "cover",
+=======
+      "resizeMode": "contain",
+>>>>>>> a546eee61e56ade61f5ad8f0ecbdc2ac9f9c4ca9
       "backgroundColor": "#7FC8A9"
     },
     "updates": {
