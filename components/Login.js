@@ -15,10 +15,16 @@ const Login = ({navigation}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [userId, setUserIdHook] = useState("");
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> c34154390619e8ae0d7233b4b891e69cd0721ab6
   const [token, setTokenHook] = useState("");
   const {setToken, getToken} = useToken();
   const {setUserId, getUserId, removeGroupName, removeGroupId, removeUserName, removeUserId, setUserName, setGroupId} = localData();
   
+<<<<<<< HEAD
+=======
   const loginUser = async () => {
     removeGroupName().then(() => {
       removeGroupId().then(() => {
@@ -58,13 +64,86 @@ const Login = ({navigation}) => {
         })
       })
     }) 
+=======
+  const {setToken} = useToken();
+  const {setUserId, getUserId} = localData();
+
+>>>>>>> c34154390619e8ae0d7233b4b891e69cd0721ab6
+  const loginUser = async () => {
+    removeGroupName().then(() => {
+      removeGroupId().then(() => {
+        removeUserName().then(() => {
+          removeUserId().then(() => { 
+            fetch('https://easygrocy.com/api/auth/login', {
+              method: "POST",
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                email: email,
+                password: password
+              })
+            })
+            .then((response) => {
+                if(!response.ok) throw new Error(response.status);
+                else return response.json();
+            })
+            .then((json) => {
+              setToken(json.access_token).then(() => {
+                setUserId("" + json.user_id).then(() => {
+                  getToken().then((token) => {
+                    setTokenHook(token);
+                    getUserGroups().then(() => {
+                      getUserName().then(() => {
+                        navigation.navigate("GrocyStack");
+                      })
+                    })
+                  })
+                });
+              })
+            })
+            .catch((error) => console.error(error))
+          })
+        })
+<<<<<<< HEAD
+      })
+    }) 
+=======
+        .then((response) => {
+            if(!response.ok) throw new Error(response.status);
+            else return response.json();
+        })
+        .then((json) => {
+          setToken(json.access_token)
+          .then(() => {
+            setUserId("" + json.user_id).then(() => {
+              // getUserGroups().then(() => {
+                navigation.navigate("GrocyStack");
+              // })
+            });
+          })
+        })
+        .catch((error) => console.error(error)) 
+>>>>>>> a546eee61e56ade61f5ad8f0ecbdc2ac9f9c4ca9
+>>>>>>> c34154390619e8ae0d7233b4b891e69cd0721ab6
   }
 
   const getUserGroups = async () => {
     getUserId().then((id) => {
       setUserIdHook(id);
+<<<<<<< HEAD
       fetch(`https://easygrocy.com/api/user/${userId}/groups`, {
         method: "GET",
+=======
+<<<<<<< HEAD
+      fetch(`https://easygrocy.com/api/user/${userId}/groups`, {
+        method: "GET",
+=======
+      fetch(`https://easygrocy.com/api/user/${userID}/groups`, {
+        method: "POST",
+>>>>>>> a546eee61e56ade61f5ad8f0ecbdc2ac9f9c4ca9
+>>>>>>> c34154390619e8ae0d7233b4b891e69cd0721ab6
         headers: {'Authorization': 'Bearer ' + token}
       })
       .then((response) => {
@@ -73,15 +152,32 @@ const Login = ({navigation}) => {
       })
       .then((json) => {
           // console.log(json);
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> c34154390619e8ae0d7233b4b891e69cd0721ab6
           const groups = json.groups;
           if (groups) {
             setGroupId("" + groups[0].id);
             setGroupName(groups[0].name);
           }
+<<<<<<< HEAD
+=======
+=======
+          console.log(json);
+          setGroupId("" + json.group.id);
+          setGroupNameHook(json.group.name);
+          setGroupName(json.group.name);
+>>>>>>> a546eee61e56ade61f5ad8f0ecbdc2ac9f9c4ca9
+>>>>>>> c34154390619e8ae0d7233b4b891e69cd0721ab6
       })
     })
   }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> c34154390619e8ae0d7233b4b891e69cd0721ab6
   const getUserName = async () => {
     fetch(`https://easygrocy.com/api/user/${userId}`, {
       method: "GET",
@@ -97,6 +193,11 @@ const Login = ({navigation}) => {
     })
   }
 
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> a546eee61e56ade61f5ad8f0ecbdc2ac9f9c4ca9
+>>>>>>> c34154390619e8ae0d7233b4b891e69cd0721ab6
   return (
     <View style={styles.rootContainer}>
       <Text style={styles.grocyTextHeader}>Login</Text>
