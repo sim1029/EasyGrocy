@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { 
   StyleSheet, 
@@ -12,78 +12,54 @@ import useToken from "./useToken";
 import localData from "./localData";
 
 const Login = ({navigation}) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [userId, setUserIdHook] = useState("");
-  const [token, setTokenHook] = useState("");
-  const {setToken, getToken} = useToken();
-  const {setUserId, getUserId, removeGroupName, removeGroupId, removeUserName, removeUserId, setUserName, setGroupId} = localData();
+  const [email, setEmailHook] = useState("S@gmail.com");
+  const [password, setPasswordHook] = useState("pass");
+  const {setToken} = useToken();
+  const {setUserId, setUserName, setGroupId, setEmail, setPassword, getEmail, getPassword} = localData();
+
+  // useEffect(() => {
+  //   getEmail().then((email) => {
+  //     console.log(email)
+  //     getPassword().then((password) => console.log(password));
+  //   })
+  // }, [])
   
   const loginUser = async () => {
-    removeGroupName().then(() => {
-      removeGroupId().then(() => {
-        removeUserName().then(() => {
-          removeUserId().then(() => { 
-            fetch('https://easygrocy.com/api/auth/login', {
-              method: "POST",
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                email: email,
-                password: password
-              })
-            })
-            .then((response) => {
-                if(!response.ok) throw new Error(response.status);
-                else return response.json();
-            })
-            .then((json) => {
-              setToken(json.access_token).then(() => {
-                setUserId("" + json.user_id).then(() => {
-                  getToken().then((token) => {
-                    setTokenHook(token);
-                    getUserGroups().then(() => {
-                      getUserName().then(() => {
-                        navigation.navigate("GrocyStack");
-                      })
-                    })
-                  })
-                });
-              })
-            })
-            .catch((error) => console.error(error))
-          })
-        })
-      })
-    }) 
-  }
-
-  const getUserGroups = async () => {
-    getUserId().then((id) => {
-      setUserIdHook(id);
-      fetch(`https://easygrocy.com/api/user/${userId}/groups`, {
-        method: "GET",
-        headers: {'Authorization': 'Bearer ' + token}
-      })
-      .then((response) => {
-        if(!response.ok) throw new Error(response.status)
-        else return response.json();
-      })
-      .then((json) => {
-          // console.log(json);
-          const groups = json.groups;
-          if (groups) {
-            setGroupId("" + groups[0].id);
-            setGroupName(groups[0].name);
-          }
+    fetch('https://easygrocy.com/api/auth/login', {
+      method: "POST",
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password
       })
     })
+    .then((response) => {
+        if(!response.ok) throw new Error(response.status);
+        else return response.json();
+    })
+    .then((json) => {
+      setToken(json.access_token).then(() => {
+        setUserId("" + json.user_id).then(() => {
+          getUserGroups("" + json.user_id, json.access_token).then(() => {
+            setEmail(email).then(() => {
+              setPassword(password).then(() => {
+                getUserName("" + json.user_id, json.access_token).then(() => {
+                  navigation.navigate("GrocyStack");
+                });
+              });
+            });
+          });
+        });
+      });
+    })
+    .catch((error) => console.error(error));
   }
 
-  const getUserName = async () => {
-    fetch(`https://easygrocy.com/api/user/${userId}`, {
+  const getUserGroups = async (userId, token) => {
+    fetch(`https://easygrocy.com/api/user/${userId}/groups`, {
       method: "GET",
       headers: {'Authorization': 'Bearer ' + token}
     })
@@ -92,8 +68,25 @@ const Login = ({navigation}) => {
       else return response.json();
     })
     .then((json) => {
-        console.log(json);
-        setUserName(json.name);
+        const groups = json.groups;
+        if (groups.length > 0) {
+          setGroupId("" + groups[0].id);
+          setGroupName(groups[0].name);
+        }
+    })
+  }
+
+  const getUserName = async (userId, token) => {
+    fetch(`https://easygrocy.com/api/user/${userId}`, {
+      method: "GET",
+      headers: {'Authorization': 'Bearer ' + token}
+    })
+    .then((response) => {
+      if(!response.ok) throw new Error(response.status)
+      else return response.json();
+    })
+    .then(async (json) => {
+        await setUserName(json.user.name);
     })
   }
 
@@ -105,7 +98,7 @@ const Login = ({navigation}) => {
         style={styles.formInput}
         placeholder="Email"
         placeholderTextColor="#444941"
-        onChangeText={(email) => setEmail(email)}
+        onChangeText={(email) => setEmailHook(email)}
         value={email}
         textContentType={"emailAddress"}
         autocomplete={"email"}
@@ -116,7 +109,7 @@ const Login = ({navigation}) => {
         placeholder="Password"
         placeholderTextColor="#444941"
         secureTextEntry={true}
-        onChangeText={(password) => setPassword(password)}
+        onChangeText={(password) => setPasswordHook(password)}
         value={password}
       />
 

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const localData = () => {
@@ -115,6 +114,62 @@ const localData = () => {
           }
     }
 
+    const getEmail = async () => {
+        try {
+            return await AsyncStorage.getItem('email');
+        } catch(e) {
+            // read error
+            console.error(e);
+        }
+  
+    }
+
+    const setEmail = async (email) => {
+        try {
+            await AsyncStorage.setItem('email', email);
+        } catch(e) {
+            // save error
+            console.error(e);
+        }
+    }
+
+    const removeEmail = async () => {
+        try {
+            await AsyncStorage.removeItem('email');
+          } catch(e) {
+            // remove error
+            console.error(e);
+          }
+    }
+
+    const getPassword = async () => {
+        try {
+            return await AsyncStorage.getItem('password');
+        } catch(e) {
+            // read error
+            console.error(e);
+        }
+  
+    }
+
+    const setPassword = async (password) => {
+        try {
+            await AsyncStorage.setItem('password', password);
+        } catch(e) {
+            // save error
+            console.error(e);
+        }
+    }
+
+    const removePassword = async () => {
+        try {
+            await AsyncStorage.removeItem('password');
+          } catch(e) {
+            // remove error
+            console.error(e);
+          }
+    }
+
     return {
         getUserName,
         setUserName,
@@ -128,6 +183,12 @@ const localData = () => {
         getGroupId,
         setGroupId,
         removeGroupId,
+        setEmail,
+        getEmail,
+        removeEmail,
+        setPassword,
+        getPassword,
+        removePassword,
     }
 
 }

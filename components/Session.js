@@ -9,7 +9,7 @@ import GrocyStack from './GrocyStack';
 
 const Stack = createStackNavigator();
 
-const Auth = (props) => {
+const Session = (props) => {
 
     return (
         <View style={{flex: 1}} onLayout={props.onLayout}>
@@ -20,13 +20,13 @@ const Auth = (props) => {
                     }}
                 >
                     <Stack.Screen
-                        name={"Signup"}
-                        component={Signup}
+                        name={"GrocyStack"}
+                        component={GrocyStack}
                     >
                     </Stack.Screen>
                     <Stack.Screen
-                        name={"GrocyStack"}
-                        component={GrocyStack}
+                        name={"Signup"}
+                        component={Signup}
                     >
                     </Stack.Screen>
                     <Stack.Screen
@@ -40,4 +40,4 @@ const Auth = (props) => {
     );
 }
 
-export default Auth;
+export default Session;

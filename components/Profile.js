@@ -1,6 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import localData from "./localData";
 import useToken from "./useToken";
 import { 
@@ -14,26 +14,45 @@ import {
     SafeAreaView,
  } from 'react-native';
 
-const Profile = ({navigation}) => {
+const Profile = ({route, navigation, props}) => {
     const [squad, setSquad] = useState("");
     const [code, setCode] = useState("");
-    const {getUserId, setUserId, removeUserId, setGroupName, getGroupName, setGroupId, getUserName} = localData();
-    const {getToken} = useToken();
+    const {
+      setGroupName, 
+      getGroupName, 
+      setGroupId, 
+      getUserName, 
+      removeUserId,
+      removeUserName, 
+      removeGroupName, 
+      removeGroupId, 
+      removeEmail, 
+      removePassword,
+    } = localData();
+    const {getToken, removeToken} = useToken();
 
-    const [username, setUsername] = useState("");
+    const [username, setUsernameHook] = useState("");
     const [groupName, setGroupNameHook] = useState("");
 
-    React.useEffect(() => {
-      const unsubscribe = navigation.addListener('focus', () => {
-        // The screen is focused
-        // Call any action
-        getUserName().then((id) => setUsername(id));
-        getGroupName().then((name) => setGroupNameHook(name));
+
+    useEffect(() => {
+      getUserName().then((id) => {
+        setUsernameHook(id)}
+      );
+      getGroupName().then((name) => {
+        setGroupNameHook(name)
       });
-  
-      // Return the function to unsubscribe from the event so it gets removed on unmount
-      return unsubscribe;
-    }, [navigation]);
+    }, []);
+
+    const clearLocalStorage = async () => {
+      await removeToken().then()
+      await removeUserId().then()
+      await removeUserName().then()
+      await removeGroupName().then()
+      await removeGroupId()
+      await removePassword()
+      await removeEmail()
+    }
 
 
     return (
@@ -115,8 +134,11 @@ const Profile = ({navigation}) => {
             <Text style = {styles.thanksText}>Thanks for using EasyGrocy!</Text>
 
             <TouchableOpacity
-            style= {styles.soBtn}
-            onPress={() => {navigation.navigate("Login")}}
+              style= {styles.soBtn}
+              onPress={async () => {
+                await clearLocalStorage()
+                navigation.navigate("Login");
+              }}
             >
              <Text style= {styles.loginText}>Sign Out</Text>   
             </TouchableOpacity>

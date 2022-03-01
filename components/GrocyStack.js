@@ -8,9 +8,9 @@ import Profile from "./Profile"
 
 const Tab = createBottomTabNavigator();
 
-const GrocyStack = ({navigation}) => {
+const GrocyStack = ({route, navigation}) => {
+    console.log(route.params);
   return (
-    // <NavigationContainer>
       <Tab.Navigator
         screenOptions={{
             headerShown: false,
@@ -20,10 +20,9 @@ const GrocyStack = ({navigation}) => {
         }}
       >
         <Tab.Screen 
-            name="Settings" 
-            component={Profile} 
+            name="Profile" 
+            component={Profile}
             options={{
-                title: "Profile",
                 tabBarIcon: () => {
                     return <Image style={styles.tabBarIcon} source={require("../assets/TabBar/profile.png")}></Image>
                 }
@@ -31,7 +30,8 @@ const GrocyStack = ({navigation}) => {
         </Tab.Screen>
         <Tab.Screen 
             name={"Home"}
-            component={Home} 
+            // children={() => <Home></Home>}
+            component={Home}
             options={{
                 title: "Home",
                 tabBarIcon: () => {
@@ -41,7 +41,7 @@ const GrocyStack = ({navigation}) => {
         </Tab.Screen>
         <Tab.Screen 
             name="Shopping List" 
-            component={ShoppingList} 
+            component={ShoppingList}
             options={{
                 title: "Shopping List",
                 tabBarIcon: () => {
@@ -51,7 +51,6 @@ const GrocyStack = ({navigation}) => {
         </Tab.Screen>
         
       </Tab.Navigator>
-    // </NavigationContainer>
   )
 }
 
