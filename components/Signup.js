@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, TextInput, Button, TouchableOpacity, Text,
+import { 
+  StyleSheet, 
+  View, 
+  TextInput,
+  TouchableOpacity, 
+  Text,
 } from "react-native";
 import useToken from "./useToken";
 import localData from "./localData";

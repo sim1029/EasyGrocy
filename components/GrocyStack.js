@@ -1,6 +1,5 @@
 import * as React from 'react';
-import {Image, StyleSheet} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
+import { Image, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from './Home'
 import ShoppingList from './ShoppingList'
@@ -8,8 +7,7 @@ import Profile from "./Profile"
 
 const Tab = createBottomTabNavigator();
 
-const GrocyStack = ({route, navigation}) => {
-    console.log(route.params);
+const GrocyStack = () => {
   return (
       <Tab.Navigator
         screenOptions={{
@@ -30,7 +28,6 @@ const GrocyStack = ({route, navigation}) => {
         </Tab.Screen>
         <Tab.Screen 
             name={"Home"}
-            // children={() => <Home></Home>}
             component={Home}
             options={{
                 title: "Home",

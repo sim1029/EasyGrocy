@@ -1,10 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, Text } from "react-native";
-import { NavigationContainer } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
 import Auth from './components/Auth';
 import Session from './components/Session';
-import GrocyStack from './components/GrocyStack';
 import useToken from './components/useToken';
 import localData from './components/localData';
 
@@ -21,7 +18,6 @@ export default function App() {
         await SplashScreen.preventAutoHideAsync();
         // Do someting behind the scenes on load
         await attemptLogin();
-
       } catch (e) {
         console.warn(e);
       } 
