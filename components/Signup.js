@@ -17,8 +17,8 @@ const Signup = ({navigation}) => {
     const {setToken} = useToken();
     const {setUserId, setUserName, setEmail, setPassword} = localData();
 
-    const signUpUser = () => {
-      fetch('https://easygrocy.com/api/auth/register', {
+    const signUpUser = async () => {
+      await fetch('https://easygrocy.com/api/auth/register', {
         method: "POST",
         headers: {
           Accept: 'application/json',
@@ -34,18 +34,13 @@ const Signup = ({navigation}) => {
         if(!response.ok) throw new Error(response.status);
         else return response.json();
       })
-      .then((json) => {
-        setToken(json.access_token).then(() => {
-          setUserName(username).then(() => {
-            setUserId("" + json.user_id).then(() => {
-              setEmail(email).then(() => {
-                setPassword(password).then(() => {
-                  navigation.navigate("GrocyStack");
-                })
-              })
-            })
-          })
-        })
+      .then(async (json) => {
+        await setToken(json.access_token)
+        await setUserName(username)
+        await setUserId("" + json.user_id)
+        await setEmail(email)
+        await setPassword(password)
+        navigation.navigate("GrocyStack");
       })
       .catch((error) => console.error(error))
   }
