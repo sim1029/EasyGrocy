@@ -12,10 +12,10 @@ import useToken from "./useToken";
 import localData from "./localData";
 
 const Login = ({navigation}) => {
-  const [email, setEmailHook] = useState("S@gmail.com");
-  const [password, setPasswordHook] = useState("pass");
+  const [email, setEmailHook] = useState("");
+  const [password, setPasswordHook] = useState("");
   const {setToken} = useToken();
-  const {setUserId, setUserName, setGroupId, setEmail, setPassword, getEmail, getPassword} = localData();
+  const {setUserId, setUserName, setGroupId, setEmail, setPassword, getEmail, getPassword, getUserName} = localData();
 
   // useEffect(() => {
   //   getEmail().then((email) => {
@@ -25,7 +25,7 @@ const Login = ({navigation}) => {
   // }, [])
   
   const loginUser = async () => {
-    fetch('https://easygrocy.com/api/auth/login', {
+    await fetch('https://easygrocy.com/api/auth/login', {
       method: "POST",
       headers: {
         Accept: 'application/json',
@@ -40,26 +40,20 @@ const Login = ({navigation}) => {
         if(!response.ok) throw new Error(response.status);
         else return response.json();
     })
-    .then((json) => {
-      setToken(json.access_token).then(() => {
-        setUserId("" + json.user_id).then(() => {
-          getUserGroups("" + json.user_id, json.access_token).then(() => {
-            setEmail(email).then(() => {
-              setPassword(password).then(() => {
-                getUserName("" + json.user_id, json.access_token).then(() => {
-                  navigation.navigate("GrocyStack");
-                });
-              });
-            });
-          });
-        });
-      });
+    .then( async (json) => {
+      await setToken(json.access_token)
+      await setUserId("" + json.user_id)
+      await getUserGroups("" + json.user_id, json.access_token)
+      await setEmail(email)
+      await setPassword(password)
+      await getUserNameEndpoint("" + json.user_id, json.access_token)
+      navigation.navigate("GrocyStack");
     })
     .catch((error) => console.error(error));
   }
 
   const getUserGroups = async (userId, token) => {
-    fetch(`https://easygrocy.com/api/user/${userId}/groups`, {
+    await fetch(`https://easygrocy.com/api/user/${userId}/groups`, {
       method: "GET",
       headers: {'Authorization': 'Bearer ' + token}
     })
@@ -67,17 +61,17 @@ const Login = ({navigation}) => {
       if(!response.ok) throw new Error(response.status)
       else return response.json();
     })
-    .then((json) => {
+    .then(async (json) => {
         const groups = json.groups;
         if (groups.length > 0) {
-          setGroupId("" + groups[0].id);
-          setGroupName(groups[0].name);
+          await setGroupId("" + groups[0].id);
+          await setGroupName(groups[0].name);
         }
     })
   }
 
-  const getUserName = async (userId, token) => {
-    fetch(`https://easygrocy.com/api/user/${userId}`, {
+  const getUserNameEndpoint = async (userId, token) => {
+    await fetch(`https://easygrocy.com/api/user/${userId}`, {
       method: "GET",
       headers: {'Authorization': 'Bearer ' + token}
     })
