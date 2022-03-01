@@ -11,6 +11,7 @@ import {
     Modal,
 } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
+import DatePicker from 'react-native-date-picker'
 import localData from "./localData";
 import useToken from "./useToken";
 
@@ -22,6 +23,9 @@ const Home = ({navigation}) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [modalPrice, setModalPrice] = useState(0);
     const [modalName, setModalName] = useState("");
+    const [modalQuantity, setModalQuantity] = useState("");
+    const [modalExpiration, setExpiration] = useState(new Date());
+    const [openDatePicker, setOpenDatePicker] = useState(false);
 
     const {getToken} = useToken();
     const {getGroupId, getGroupName} = localData();
@@ -158,37 +162,39 @@ const Home = ({navigation}) => {
                             
                             <TextInput
                                 onChangeText={(modalName) => setModalName(modalName)}
-                                placeholder='name'
+                                placeholder='Item Name'
                                 placeholderTextColor="#5F7A61"
                                 style={styles.modalInputField}
                                 autoComplete={false}
                             >
                             </TextInput>
                             <TextInput
-                                placeholder={`price: $${modalPrice}`}
+                                placeholder='Price $'
                                 placeholderTextColor="#5F7A61"
                                 style={styles.modalInputField}
                                 keyboardType='decimal-pad'
-                                // value={"$" + modalPrice}
-                                // onChangeText={(modalPrice) => setModalPrice(modalPrice)}
+                                onChangeText={(modalPrice) => setModalPrice(modalPrice)}
                             ></TextInput>   
                             <TextInput
-                                onChangeText={() => console.log("EDIT")}
-                                placeholder='quantity'
+                                onChangeText={(modalQuantity) => setModalQuantity(modalQuantity)}
+                                placeholder='Quantity'
                                 placeholderTextColor="#5F7A61"
                                 style={styles.modalInputField}
                                 keyboardType='numeric'
                             ></TextInput> 
+                            <Pressable style={styles.modalDatePicker} onPress={() => setOpenDatePicker(true)}>
+                                <Text style={styles.modalDatePickerText}>Expiration (optional)</Text>
+                            </Pressable>
                             <Pressable
                                 style={styles.submitNewItemButton}
                                 onPress={() => {
                                     // setListData(listData.push({key: `${modalName}`, text: `item#${modalPrice}`}))
-                                    console.log(modalName);
                                     setModalVisible(false);
                                 }}
                             >
                                 <Text style={styles.submitNewItemButtonText}>Submit</Text>
                             </Pressable>
+                            
                         </View>
                     </View>
                 </Modal>
@@ -197,7 +203,6 @@ const Home = ({navigation}) => {
                         autoCapitalize='none'
                         autoCorrect={true}
                         onChangeText={(searchText) => {
-                            // console.log(searchText);
                             setSearchText(searchText);
                             filterItems(searchText);
                         }}
@@ -205,14 +210,26 @@ const Home = ({navigation}) => {
                         status='info'
                         placeholder='Search'
                         style={styles.searchInput}
-                        submitNewItemButtonText={{ color: '#000' }}
                     />
                 </View>
                 <View style={{flex: 1}}>
-                    <TouchableOpacity style={styles.newItemButton} onPress={() => setModalVisible(true)}>
+                    <TouchableOpacity style={styles.newItemButton} onPress={() => setOpenDatePicker(true)}>
                         <Text style={styles.newItemButtonText}>+</Text>
                     </TouchableOpacity>
                 </View>
+                <DatePicker
+                        modal={true}
+                        open={openDatePicker}
+                        date={modalExpiration}
+                        onConfirm={(expirationDate) => {
+                            setOpenDatePicker(false);
+                            setModalExpiration(expirationDate);
+                        }}
+                        onCancel={() => {
+                            setOpenDatePicker(false);
+                        }}
+                        display="inline"
+                    />
             </View>
             <SwipeListView
                 style={styles.swipeList}
@@ -335,7 +352,7 @@ const styles = StyleSheet.create({
         backgroundColor: "floralwhite",
         borderRadius: 40,
         width: 300,
-        height: 300,
+        height: 400,
         justifyContent: "center",
         alignItems: "center",
     },
@@ -343,9 +360,22 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         width: 100,
         height: 40,
+        marginTop: 20,
         backgroundColor: "#444941",
         justifyContent: "center",
         alignItems: "center",
+    },
+    modalDatePicker: {
+        width: 250,
+        height: 40,
+        margin: 10,
+        backgroundColor: "#D5EEBB",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    modalDatePickerText: {
+        color: "#5F7A61",
+        textAlign: "center",
     },
     submitNewItemButtonText: {
         color: "floralwhite",
@@ -356,6 +386,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
         color: "#5F7A61",
         fontWeight: "bold",
+        marginBottom: 10,
     },
     modalInputField: {
         backgroundColor: "#D5EEBB",
