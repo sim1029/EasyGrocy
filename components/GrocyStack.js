@@ -9,7 +9,6 @@ import Profile from "./Profile"
 const Tab = createBottomTabNavigator();
 
 const GrocyStack = ({route, navigation}) => {
-    console.log(route.params);
   return (
       <Tab.Navigator
         screenOptions={{
