@@ -14,7 +14,7 @@ import {
     SafeAreaView,
  } from 'react-native';
 
-const Profile = ({route, navigation, props}) => {
+const Profile = ({ navigation }) => {
     const [squad, setSquad] = useState("");
     const [code, setCode] = useState("");
     const {

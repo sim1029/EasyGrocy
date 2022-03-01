@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from "react";
-import { StatusBar } from "expo-status-bar";
 import { 
   StyleSheet, 
   View, 
@@ -16,13 +15,6 @@ const Login = ({navigation}) => {
   const [password, setPasswordHook] = useState("");
   const {setToken} = useToken();
   const {setUserId, setUserName, setGroupId, setEmail, setPassword, getEmail, getPassword, getUserName} = localData();
-
-  // useEffect(() => {
-  //   getEmail().then((email) => {
-  //     console.log(email)
-  //     getPassword().then((password) => console.log(password));
-  //   })
-  // }, [])
   
   const loginUser = async () => {
     await fetch('https://easygrocy.com/api/auth/login', {
@@ -87,7 +79,6 @@ const Login = ({navigation}) => {
   return (
     <View style={styles.rootContainer}>
       <Text style={styles.grocyTextHeader}>Login</Text>
-      <StatusBar style= "auto" />
       <TextInput
         style={styles.formInput}
         placeholder="Email"

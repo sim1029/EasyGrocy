@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import Welcome from './Welcome';
 import Login from './Login';
 import Signup from './Signup';
 import GrocyStack from './GrocyStack';
