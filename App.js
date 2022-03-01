@@ -1,26 +1,78 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { View, Text } from "react-native";
+import { NavigationContainer } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
 import Auth from './components/Auth';
+import Session from './components/Session';
+import GrocyStack from './components/GrocyStack';
+import useToken from './components/useToken';
+import localData from './components/localData';
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
+
+  const {setToken, getToken} = useToken();
+  const {getPassword, getEmail, setUserId} = localData();
 
   useEffect(() => {
     async function prepare() {
       try {
-        console.log("PreventingAutoHide")
         await SplashScreen.preventAutoHideAsync();
-        // Do Whatever loading I want here
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        // Do someting behind the scenes on load
+        await attemptLogin();
+
       } catch (e) {
         console.warn(e);
-      } finally {
-        setAppIsReady(true);
-      }
+      } 
     }
     prepare();
   }, []);
+
+  const attemptLogin = async () => {
+    getEmail().then((emailRes) => {
+      getPassword().then((passwordRes) => {
+        if (emailRes != null && passwordRes != null) {
+          loginUser(emailRes, passwordRes);
+        } else {
+          setAppIsReady(true);
+        }
+      });
+    }).catch((error) => {
+      console.error(error);
+      setAppIsReady(true);
+    })
+  }
+  
+  const loginUser = async (email, password) => {
+    fetch('https://easygrocy.com/api/auth/login', {
+      method: "POST",
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password
+      })
+    })
+    .then((response) => {
+        if(!response.ok) throw new Error(response.status);
+        else return response.json();
+    })
+    .then((json) => {
+      setToken(json.access_token).then(async () => {
+        setUserId("" + json.user_id).then(async () => {
+          setUserLoggedIn(true);
+          setAppIsReady(true);
+        });
+      });
+    })
+    .catch((error) => {
+      console.error(error)
+      setAppIsReady(true);
+    })
+  }
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
@@ -30,6 +82,12 @@ export default function App() {
 
   if (!appIsReady) {
     return null;
+  }
+
+  if (userLoggedIn){
+    return(
+      <Session onLayout={onLayoutRootView}></Session>
+    )
   }
 
   return (

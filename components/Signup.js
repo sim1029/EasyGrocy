@@ -6,11 +6,11 @@ import useToken from "./useToken";
 import localData from "./localData";
 
 const Signup = ({navigation}) => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [email, setEmailHook] = useState("");
+    const [password, setPasswordHook] = useState("");
     const [username, setUsername] = useState("");
     const {setToken} = useToken();
-    const {removeUserId, setUserId, setUserName, removeGroupName, removeGroupId, removeUserName} = localData();
+    const {setUserId, setUserName, setEmail, setPassword} = localData();
 
     const signUpUser = () => {
       fetch('https://easygrocy.com/api/auth/register', {
@@ -30,15 +30,12 @@ const Signup = ({navigation}) => {
         else return response.json();
       })
       .then((json) => {
-        removeGroupName().then(() => {
-          removeGroupId().then(() => {
-            removeUserName().then(() => {
-              removeUserId().then(() => {
-                setToken(json.access_token).then(() => {
-                  setUserName(username).then(() => {
-                    setUserId("" + json.user_id);
-                    navigation.navigate("GrocyStack");
-                  })
+        setToken(json.access_token).then(() => {
+          setUserName(username).then(() => {
+            setUserId("" + json.user_id).then(() => {
+              setEmail(email).then(() => {
+                setPassword(password).then(() => {
+                  navigation.navigate("GrocyStack");
                 })
               })
             })
@@ -64,7 +61,7 @@ return (
         style={styles.userInput}
         placeholder="Email"
         placeholderTextColor="#444941"
-        onChangeText={(email) => setEmail(email)}
+        onChangeText={(email) => setEmailHook(email)}
         value={email}
         textContentType={"emailAddress"}
         autocomplete={"email"}
@@ -75,7 +72,7 @@ return (
         placeholder="Password"
         placeholderTextColor="#444941"
         secureTextEntry={true}
-        onChangeText={(password) => setPassword(password)}
+        onChangeText={(password) => setPasswordHook(password)}
         value={password}
       />
       
