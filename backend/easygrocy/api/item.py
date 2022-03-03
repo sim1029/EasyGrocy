@@ -30,26 +30,18 @@ def get_item(item_id):
         link = changes.get("link")
 
         if name is not None:
-            update_statement = Item.update().where(id=item_id).values(name=name)
-            db.session.execute(update_statement)
+            item.name = name
         if price is not None:
-            update_statement = Item.update().where(id=item_id).values(price=int(price))
-            db.session.execute(update_statement)
+            item.price = price
         if quantity is not None:
-            update_statement = Item.update().where(
-                id=item_id).values(quantity=int(quantity))
-            db.session.execute(update_statement)
+            item.quantity = quantity
         if expiration is not None:
-            update_statement = Item.update().where(
-                id=item_id).values(expiration=expiration)
-            db.session.execute(update_statement)
+            item.expiration = expiration
         if purchased is not None:
-            update_statement = Item.update().where(
-                id=item_id).values(purchased=int(purchased))
-            db.session.execute(update_statement)
+            item.purchased = purchased
         if link is not None:
-            update_statement = Item.update().where(id=item_id).values(link=link)
-            db.session.execute(update_statement)
+            item.link = link
+        db.session.add(item)
         db.session.commit()
         return json_message('Successfully updated item.')
     if request.method == "DELETE":
