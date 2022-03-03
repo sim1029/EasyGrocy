@@ -21,29 +21,37 @@ const Home = ({navigation}) => {
     const [filteredData, setFilteredData] = useState(Array());
     const [searchText, setSearchText] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
-    const [modalPrice, setModalPrice] = useState(0);
+    const [modalPrice, setModalPrice] = useState("");
     const [modalName, setModalName] = useState("");
     const [modalQuantity, setModalQuantity] = useState("");
     const [modalExpiration, setExpiration] = useState("");
     const [showPicker, setShowPicker] = useState(false);
+    const [groupExists, setGroupExists] = useState(false);
+    const [groupId, setGroupId] = useState(null);
+    const [currUser, setCurrUser] = useState(null);
+    const [token, setToken] = useState("");
 
     const {getToken} = useToken();
     const {getGroupId, getGroupName, getUserName} = localData();
-    var currUser = ""
 
-    useEffect(() => {
+    useEffect(async () => {
         getItems();
         getGroupName().then((name) => {
             setSquadName(name);
         })
-        currUser = getUserName();
+        const userName = await getUserName();
+        setCurrUser(userName);
+        const newToken = await getToken();
+        setToken(newToken);
     }, [navigation]);
 
     const getItems = async () => {
-        const group = await getGroupId();
-        if (group) {
+        const newGroupId = await getGroupId();
+        setGroupId(newGroupId);
+        if (newGroupId) {
+            setGroupExists(true);
             getToken().then((token) => {
-                fetch(`https://easygrocy.com/api/group/${group}/items`, {
+                fetch(`https://easygrocy.com/api/group/${newGroupId}/items`, {
                 headers: {'Authorization': 'Bearer ' + token}
             })
             .then((response) => {
@@ -52,19 +60,32 @@ const Home = ({navigation}) => {
             })
             .then((json) => {
                 let items = json.items;
-                let new_arr = Array(items.length);
+                let new_arr = Array();
+                let key = 0;
                 for(let i in items){
-                    const users = items[i].users;
-                    let usersString = "";
-                    for(let j in users) {
-                        if (j > 0) usersString += " " + users[j].name;
-                        else usersString += users[j].name;
+                    if (items[i].purchased === 1) {
+                        const users = items[i].users;
+                        let usersString = "";
+                        for(let j in users) {
+                            if (j > 0) usersString += " " + users[j].name;
+                            else usersString += users[j].name;
+                        }
+                        let expiration = "";
+                        if (items[i].expiration) {
+                            expiration = items[i].expiration;
+                        }
+                        let newItem = {
+                            key: `${key}`, 
+                            name: `${items[i].name}`, 
+                            quantity: `${items[i].quantity}`, 
+                            price: `${items[i].price}`, 
+                            usernames: `${usersString}`, 
+                            expiration: `${expiration}`,
+                            id: `${items[i].id}`,
+                        }
+                        key += 1;
+                        new_arr.push(newItem);
                     }
-                    let expiration = "";
-                    if (items[i].expiration) {
-                        expiration = items[i].expiration
-                    }
-                    new_arr[i] = {key: `${i}`, name: `${items[i].name}`, quantity: `${items[i].quantity}`, price: `${items[i].price}`, usernames: `${usersString}`, expiration: `${expiration}`}
                 }
                 setListData(new_arr);
             })
@@ -73,6 +94,23 @@ const Home = ({navigation}) => {
             console.log("Group was NULL");
         }
     }
+    
+    const deleteItem = async (idx) => {
+        let itemId = listData[idx].id;
+        fetch(`https://easygrocy.com/api/item/${itemId}`, {
+            method: "DELETE",
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then((response) => {
+            if(!response.ok) throw new Error(response.status);
+            else return response.json();
+        }).then((json) => {
+            console.log(json);
+        }).catch((error) => console.error(error));
+    }
 
     const closeRow = (rowMap, rowKey) => {
         if (rowMap[rowKey]) {
@@ -80,21 +118,20 @@ const Home = ({navigation}) => {
         }
     };
 
-    const deleteRow = (rowMap, rowKey) => {
+    const deleteRow = async (rowMap, rowKey) => {
         closeRow(rowMap, rowKey);
         const newData = [...listData];
         const prevIndex = listData.findIndex(item => item.key === rowKey);
+        await deleteItem(prevIndex);
         newData.splice(prevIndex, 1);
         setListData(newData);
     };
 
-    const addToCart = (rowMap, rowKey) => {
+    const addToCart = async (rowMap, rowKey) => {
         closeRow(rowMap, rowKey);
         const newData = [...listData];
         const prevIndex = listData.findIndex(item => item.key === rowKey);
-        const oldData = newData[prevIndex]
-        // Send back to shopping cart
-        console.log(oldData);
+        await sendToCart(prevIndex);
         newData.splice(prevIndex, 1);
         setListData(newData);
     }
@@ -165,6 +202,82 @@ const Home = ({navigation}) => {
         hideDatePicker();
     }
 
+    const addNewItem = async () => {
+        const newData = [...listData];
+        let newItem = {
+            key: `${listData.length}`, 
+            name: `${modalName}`, 
+            price: `${modalPrice.substring(1)}`, 
+            quantity: `${modalQuantity}`, 
+            expiration: `${modalExpiration === "" ? "" : modalExpiration.toDateString().substring(4)}`, 
+            usernames: `${currUser}`,
+            purchased: `${1}`,
+            group_id: `${groupId}`,
+        }
+        if (groupExists) { 
+            fetch(`https://easygrocy.com/api/item/create_item`, {
+                method: "POST",
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newItem)
+            }).then((response) => {
+                if(!response.ok) throw new Error(response.status);
+                else return response.json();
+            }).then((json) => {
+                console.log("Successfully added item");
+                console.log(json);
+                const users = json.item.users;
+                let usersString = "";
+                for(let i in users) {
+                    if (i > 0) usersString += " " + users[i].name;
+                    else usersString += users[i].name;
+                }
+                let expiration = "";
+                if (json.item.expiration) {
+                    expiration = json.item.expiration;
+                }
+                let updatedItem = {
+                    key: `${newData.length}`, 
+                    name: `${json.item.name}`, 
+                    quantity: `${json.item.quantity}`, 
+                    price: `${json.item.price}`, 
+                    usernames: `${usersString}`, 
+                    expiration: `${expiration}`,
+                    id: `${json.item.id}`,
+                }
+                newData.push(updatedItem);
+            }).catch((error) => console.error(error));
+            setListData(newData);
+        }
+        setModalName("");
+        setModalPrice("");
+        setExpiration("");
+        setModalQuantity("");
+        setModalVisible(false);
+    }
+
+    const sendToCart = async (idx) => {
+        let itemId = listData[idx].id;
+        let fields = {purchased: 0};
+        fetch(`https://easygrocy.com/api/item/${itemId}`, {
+            method: "PUT",
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(fields)
+        }).then((response) => {
+            if(!response.ok) throw new Error(response.status);
+            else return response.json();
+        }).then((json) => {
+            console.log(json);
+        }).catch((error) => console.error(error));
+    }
+
     return (
         <SafeAreaView style={styles.rootContainer}>
             <Text style={styles.headerText}>{squad ? `${squad} - ` : ""}Inventory</Text>
@@ -193,7 +306,7 @@ const Home = ({navigation}) => {
                                 style={styles.modalInputField}
                                 keyboardType='decimal-pad'
                                 onChangeText={(modalPrice) => setModalPrice(modalPrice)}
-                                value={modalPrice.indexOf("$") !== -1 || modalPrice === "" ? modalPrice : "$" + modalPrice}
+                                value={modalPrice === "" || modalPrice.indexOf("$") !== -1 ? modalPrice : "$" + modalPrice}
                             ></TextInput>   
                             <TextInput
                                 onChangeText={(modalQuantity) => setModalQuantity(modalQuantity)}
@@ -211,28 +324,7 @@ const Home = ({navigation}) => {
                             </Pressable>
                             <Pressable
                                 style={styles.submitNewItemButton}
-                                onPress={async () => {
-                                    if (currUser === "") {
-                                        currUser = await getUserName();
-                                    }
-                                    const newData = [...listData];
-                                    newData.push({
-                                        key: `${listData.length}`, 
-                                        name: `${modalName}`, 
-                                        price: `${modalPrice.substring(1)}`, 
-                                        quantity: `${modalQuantity}`, 
-                                        expiration: `${modalExpiration === "" ? "" : modalExpiration.toDateString().substring(4)}`, 
-                                        usernames: `${currUser}`
-                                    });
-                                    console.log(newData);
-                                    setListData(newData);
-                                    setModalName("");
-                                    setModalPrice("");
-                                    setExpiration("");
-                                    setModalQuantity("");
-                                    // console.log({key: `${listData.length}`, name: `${modalName}`, price: `${modalPrice !== "" ? modalPrice.substring(1) : modalPrice}`, quantity: `${modalQuantity}`, modalExpiration: `${modalExpiration}`, usernames: `${currUser}`})
-                                    setModalVisible(false);
-                                }}
+                                onPress={addNewItem}
                             >
                                 <Text style={styles.submitNewItemButtonText}>Submit</Text>
                             </Pressable>
@@ -324,7 +416,7 @@ const styles = StyleSheet.create({
         top: 0,
         width: 75,
         height: 80,
-        backgroundColor: '#5F7A61',
+        backgroundColor: '#0F4C75',
         right: 0
     },
     backLeftButton: {
