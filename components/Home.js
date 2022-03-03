@@ -11,7 +11,7 @@ import {
     Modal,
 } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import DatePicker from 'react-native-date-picker'
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import localData from "./localData";
 import useToken from "./useToken";
 
@@ -24,17 +24,19 @@ const Home = ({navigation}) => {
     const [modalPrice, setModalPrice] = useState(0);
     const [modalName, setModalName] = useState("");
     const [modalQuantity, setModalQuantity] = useState("");
-    const [modalExpiration, setExpiration] = useState(new Date());
-    const [openDatePicker, setOpenDatePicker] = useState(false);
+    const [modalExpiration, setExpiration] = useState("");
+    const [showPicker, setShowPicker] = useState(false);
 
     const {getToken} = useToken();
-    const {getGroupId, getGroupName} = localData();
+    const {getGroupId, getGroupName, getUserName} = localData();
+    var currUser = ""
 
     useEffect(() => {
         getItems();
         getGroupName().then((name) => {
             setSquadName(name);
         })
+        currUser = getUserName();
     }, [navigation]);
 
     const getItems = async () => {
@@ -58,9 +60,12 @@ const Home = ({navigation}) => {
                         if (j > 0) usersString += " " + users[j].name;
                         else usersString += users[j].name;
                     }
-                    new_arr[i] = {key: `${i}`, name: `${items[i].name}`, quantity: `${items[i].quantity}`, price: `${items[i].price}`, usernames: `${usersString}`}
+                    let expiration = "";
+                    if (items[i].expiration) {
+                        expiration = items[i].expiration
+                    }
+                    new_arr[i] = {key: `${i}`, name: `${items[i].name}`, quantity: `${items[i].quantity}`, price: `${items[i].price}`, usernames: `${usersString}`, expiration: `${expiration}`}
                 }
-                console.log("Fetched New Items!");
                 setListData(new_arr);
             })
             });
@@ -111,6 +116,7 @@ const Home = ({navigation}) => {
                 </View>
                 <View style={{alignItems: "center", flex: 2}}>
                     <Text style={styles.itemQuantity}>Qt: {data.item.quantity}</Text>
+                    <Text style={styles.itemExpirationDate}>{"Expiration Date: " + data.item.expiration}</Text>
                 </View>
             </View>
         </TouchableHighlight>
@@ -132,7 +138,6 @@ const Home = ({navigation}) => {
             </TouchableOpacity>
         </View>
     );
-        // console.log(props.listData);
 
     const filterItems = (searchText) => {
         if (searchText == "") {
@@ -146,6 +151,19 @@ const Home = ({navigation}) => {
         setFilteredData(filteredItems)
     }
 
+    const showDatePicker = () => {
+        setShowPicker(true);
+    }
+
+    const hideDatePicker = () => {
+        setShowPicker(false);
+    }
+
+    const handleConfirmPicker = (date) => {
+        console.log("date selected: ", date);
+        setExpiration(date);
+        hideDatePicker();
+    }
 
     return (
         <SafeAreaView style={styles.rootContainer}>
@@ -166,6 +184,7 @@ const Home = ({navigation}) => {
                                 placeholderTextColor="#5F7A61"
                                 style={styles.modalInputField}
                                 autoComplete={false}
+                                value={modalName}
                             >
                             </TextInput>
                             <TextInput
@@ -174,6 +193,7 @@ const Home = ({navigation}) => {
                                 style={styles.modalInputField}
                                 keyboardType='decimal-pad'
                                 onChangeText={(modalPrice) => setModalPrice(modalPrice)}
+                                value={modalPrice.indexOf("$") !== -1 || modalPrice === "" ? modalPrice : "$" + modalPrice}
                             ></TextInput>   
                             <TextInput
                                 onChangeText={(modalQuantity) => setModalQuantity(modalQuantity)}
@@ -181,22 +201,53 @@ const Home = ({navigation}) => {
                                 placeholderTextColor="#5F7A61"
                                 style={styles.modalInputField}
                                 keyboardType='numeric'
+                                value={modalQuantity}
                             ></TextInput> 
-                            <Pressable style={styles.modalDatePicker} onPress={() => setOpenDatePicker(true)}>
-                                <Text style={styles.modalDatePickerText}>Expiration (optional)</Text>
+                            <Pressable
+                                style={styles.modalDatePicker}
+                                onPress={showDatePicker}
+                            >
+                                <Text style={styles.modalDatePickerText}>{modalExpiration === "" ? "Expiration" : modalExpiration.toDateString()}</Text>
                             </Pressable>
                             <Pressable
                                 style={styles.submitNewItemButton}
-                                onPress={() => {
-                                    // setListData(listData.push({key: `${modalName}`, text: `item#${modalPrice}`}))
+                                onPress={async () => {
+                                    if (currUser === "") {
+                                        currUser = await getUserName();
+                                    }
+                                    const newData = [...listData];
+                                    newData.push({
+                                        key: `${listData.length}`, 
+                                        name: `${modalName}`, 
+                                        price: `${modalPrice.substring(1)}`, 
+                                        quantity: `${modalQuantity}`, 
+                                        expiration: `${modalExpiration === "" ? "" : modalExpiration.toDateString().substring(4)}`, 
+                                        usernames: `${currUser}`
+                                    });
+                                    console.log(newData);
+                                    setListData(newData);
+                                    setModalName("");
+                                    setModalPrice("");
+                                    setExpiration("");
+                                    setModalQuantity("");
+                                    // console.log({key: `${listData.length}`, name: `${modalName}`, price: `${modalPrice !== "" ? modalPrice.substring(1) : modalPrice}`, quantity: `${modalQuantity}`, modalExpiration: `${modalExpiration}`, usernames: `${currUser}`})
                                     setModalVisible(false);
                                 }}
                             >
                                 <Text style={styles.submitNewItemButtonText}>Submit</Text>
                             </Pressable>
-                            
                         </View>
                     </View>
+                    {showPicker && (
+                        <DateTimePickerModal
+                            isVisible={showPicker}
+                            mode="date"
+                            onConfirm={handleConfirmPicker}
+                            onCancel={hideDatePicker}
+                            date={modalExpiration === "" ? new Date() : modalExpiration}
+                        >
+                        </DateTimePickerModal>
+                    )}
                 </Modal>
                 <View style={{flex: 5, }}>
                     <TextInput
@@ -209,32 +260,24 @@ const Home = ({navigation}) => {
                         value={searchText}
                         status='info'
                         placeholder='Search'
+                        placeholderTextColor="#5F7A61"
                         style={styles.searchInput}
                     />
                 </View>
                 <View style={{flex: 1}}>
-                    <TouchableOpacity style={styles.newItemButton} onPress={() => setOpenDatePicker(true)}>
+                    <TouchableOpacity 
+                        style={styles.newItemButton} 
+                        onPress={() => {
+                            setModalVisible(true);
+                        }}
+                    >
                         <Text style={styles.newItemButtonText}>+</Text>
                     </TouchableOpacity>
                 </View>
-                <DatePicker
-                        modal={true}
-                        open={openDatePicker}
-                        date={modalExpiration}
-                        onConfirm={(expirationDate) => {
-                            setOpenDatePicker(false);
-                            setModalExpiration(expirationDate);
-                        }}
-                        onCancel={() => {
-                            setOpenDatePicker(false);
-                        }}
-                        display="inline"
-                    />
             </View>
             <SwipeListView
                 style={styles.swipeList}
                 data={searchText != "" ? filteredData : listData}
-                // data={listData}
                 renderItem={renderItem}
                 renderHiddenItem={renderHiddenItem}
                 leftOpenValue={75}
@@ -253,11 +296,11 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     swipeList: {
-        backgroundColor: "#5F7A61",
+        backgroundColor: "#7FC8A9",
     },
     rowFront: {
         alignItems: 'flex-start',
-        backgroundColor: '#7FC8A9',
+        backgroundColor: '#5F7A61',
         borderBottomColor: 'floralwhite',
         borderBottomWidth: 1,
         justifyContent: 'center',
@@ -320,10 +363,17 @@ const styles = StyleSheet.create({
         fontSize: 20,
         marginHorizontal: 15,
     },
+    itemExpirationDate: {
+        color: "floralwhite",
+        fontSize: 12,
+        marginHorizontal: 15,
+        textAlign: "center",
+    },
     searchInput: {
         height: 50,
         backgroundColor: "floralwhite",
-        padding: 15
+        padding: 15,
+        color: "#5F7A61",
     },
     headerText: {
         color: "floralwhite",
