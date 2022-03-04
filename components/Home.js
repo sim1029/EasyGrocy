@@ -12,8 +12,12 @@ import {
 } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
 import localData from "./localData";
 import useToken from "./useToken";
+import colors from "../Methods/colors";
 
 const Home = ({navigation}) => {
     const [listData, setListData] = useState(Array());
@@ -30,22 +34,32 @@ const Home = ({navigation}) => {
     const [groupId, setGroupId] = useState(null);
     const [currUser, setCurrUser] = useState(null);
     const [token, setToken] = useState("");
+    const [purchased, setPurchased] = useState(1);
+    const [myColors, setColors] = useState(null);
+    
 
     const {getToken} = useToken();
     const {getGroupId, getGroupName, getUserName} = localData();
+    const {getColors} = colors();
 
     useEffect(async () => {
-        getItems();
-        getGroupName().then((name) => {
-            setSquadName(name);
-        })
-        const userName = await getUserName();
-        setCurrUser(userName);
-        const newToken = await getToken();
-        setToken(newToken);
+        const unsubscribe = navigation.addListener('focus', async () => {
+            setPurchased(1);
+            const newColors = await getColors();
+            setColors(newColors);
+            getItems(1, newColors);
+            getGroupName().then((name) => {
+                setSquadName(name);
+            })
+            const userName = await getUserName();
+            setCurrUser(userName);
+            const newToken = await getToken();
+            setToken(newToken);
+            });
+        return unsubscribe;
     }, [navigation]);
 
-    const getItems = async () => {
+    const getItems = async (purchased, colors) => {
         const newGroupId = await getGroupId();
         setGroupId(newGroupId);
         if (newGroupId) {
@@ -63,7 +77,7 @@ const Home = ({navigation}) => {
                 let new_arr = Array();
                 let key = 0;
                 for(let i in items){
-                    if (items[i].purchased === 1) {
+                    if (items[i].purchased == purchased) {
                         const users = items[i].users;
                         let usersString = "";
                         for(let j in users) {
@@ -74,6 +88,8 @@ const Home = ({navigation}) => {
                         if (items[i].expiration) {
                             expiration = items[i].expiration;
                         }
+                        let color = colors.get(usersString);
+                        if (!color) color = "#444941";
                         let newItem = {
                             key: `${key}`, 
                             name: `${items[i].name}`, 
@@ -82,6 +98,7 @@ const Home = ({navigation}) => {
                             usernames: `${usersString}`, 
                             expiration: `${expiration}`,
                             id: `${items[i].id}`,
+                            color: `${color}`,
                         }
                         key += 1;
                         new_arr.push(newItem);
@@ -127,11 +144,11 @@ const Home = ({navigation}) => {
         setListData(newData);
     };
 
-    const addToCart = async (rowMap, rowKey) => {
+    const togglePurchased = async (rowMap, rowKey) => {
         closeRow(rowMap, rowKey);
         const newData = [...listData];
         const prevIndex = listData.findIndex(item => item.key === rowKey);
-        await sendToCart(prevIndex);
+        await toggleItemPurchased(prevIndex);
         newData.splice(prevIndex, 1);
         setListData(newData);
     }
@@ -139,11 +156,14 @@ const Home = ({navigation}) => {
     const renderItem = data => (
         <TouchableHighlight
             onPress={() => console.log('You touched me')}
-            style={styles.rowFront}
+            style={purchased ? styles.rowFront : styles.rowFront1}
             underlayColor={'#D5EEBB'}
         >
             <View style={{flexDirection: "row", flex: 1, justifyContent: "flex-start", alignItems: "center"}}>
                 <View style={{flexDirection: "column", flex: 2, justifyContent: "center", alignItems: "center"}}>
+                    <View style={{width: 60, height: 60, borderRadius: 30, backgroundColor: data.item.color, justifyContent: "center", alignItems: "center"}}>
+                        <Text style={styles.itemNameLogo}>{data.item.usernames.substring(0,1)}</Text>
+                    </View>
                     <Text style={styles.itemUsername}>{data.item.usernames}</Text>
                 </View>
                 <View style={{flexDirection: "column", flex: 2}}
@@ -159,19 +179,26 @@ const Home = ({navigation}) => {
         </TouchableHighlight>
     );
 
+    let switchIcon
+    if (purchased) {
+        switchIcon = <FontAwesome name="shopping-cart" size={30} color="floralwhite" />
+    } else {
+        switchIcon = <Entypo name="list" size={30} color="floralwhite" />
+    }
+
     const renderHiddenItem = (data, rowMap) => (
         <View style={styles.rowBack}>
             <TouchableOpacity
                 style={styles.backLeftButton}
                 onPress={() => deleteRow(rowMap, data.item.key)}
             >
-                <Text style={styles.backButtonText}>Delete</Text>
+                <FontAwesome5 name="trash-alt" size={30} color="floralwhite" />
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.backRightButton}
-                onPress={() => addToCart(rowMap, data.item.key)}
+                onPress={() => togglePurchased(rowMap, data.item.key)}
             >
-                <Text style={styles.backButtonText}>Cart</Text>
+                {switchIcon}
             </TouchableOpacity>
         </View>
     );
@@ -204,16 +231,17 @@ const Home = ({navigation}) => {
 
     const addNewItem = async () => {
         const newData = [...listData];
-        let newItem = {
+        let newItem = { 
             key: `${listData.length}`, 
             name: `${modalName}`, 
             price: `${modalPrice.substring(1)}`, 
             quantity: `${modalQuantity}`, 
             expiration: `${modalExpiration === "" ? "" : modalExpiration.toDateString().substring(4)}`, 
             usernames: `${currUser}`,
-            purchased: `${1}`,
+            purchased: `${purchased}`,
             group_id: `${groupId}`,
         }
+        console.log(newItem);
         if (groupExists) { 
             fetch(`https://easygrocy.com/api/item/create_item`, {
                 method: "POST",
@@ -259,9 +287,11 @@ const Home = ({navigation}) => {
         setModalVisible(false);
     }
 
-    const sendToCart = async (idx) => {
+
+    const toggleItemPurchased = async (idx) => {
         let itemId = listData[idx].id;
-        let fields = {purchased: 0};
+        let toggledPurchased = purchased ? 0 : 1;
+        let fields = {purchased: toggledPurchased};
         fetch(`https://easygrocy.com/api/item/${itemId}`, {
             method: "PUT",
             headers: {
@@ -280,8 +310,29 @@ const Home = ({navigation}) => {
 
     return (
         <SafeAreaView style={styles.rootContainer}>
-            <Text style={styles.headerText}>{squad ? `${squad} - ` : ""}Inventory</Text>
-            <View style={styles.headerView}> 
+            <View style={styles.mainHeaderView}>
+                <View style={styles.headerTextView}>
+                    <Text style={styles.headerText}>{squad ? `${squad} - ` : ""}{purchased ? "Inventory" : "Grocy List"}</Text>
+                </View>
+                <TouchableOpacity 
+                    style={purchased ? styles.changeListButton : [styles.changeListButton, styles.changeListButton1]} 
+                    onPress={() => {
+                        let isPurchased = purchased;
+                        if (purchased) {
+                            setPurchased(0);
+                            isPurchased = 0;
+                        } else {
+                            setPurchased(1);
+                            isPurchased = 1;
+                        }
+                        setListData(Array());
+                        getItems(isPurchased, myColors);
+                    }
+                    }>
+                    {switchIcon}
+                </TouchableOpacity>
+            </View>
+            <View style={purchased ? styles.headerView : styles.headerView1}> 
                 <Modal
                     animationType="slide"
                     transparent={true}
@@ -368,7 +419,7 @@ const Home = ({navigation}) => {
                 </View>
             </View>
             <SwipeListView
-                style={styles.swipeList}
+                style={purchased ? styles.swipeList : styles.swipeList1}
                 data={searchText != "" ? filteredData : listData}
                 renderItem={renderItem}
                 renderHiddenItem={renderHiddenItem}
@@ -384,20 +435,32 @@ const Home = ({navigation}) => {
 
 const styles = StyleSheet.create({
     rootContainer: {
-        backgroundColor: '#7FC8A9',
+        backgroundColor: '#444941',
         flex: 1,
     },
     swipeList: {
+        backgroundColor: "#5F7A61",
+    },
+    swipeList1: {
         backgroundColor: "#7FC8A9",
     },
     rowFront: {
+        alignItems: 'flex-start',
+        backgroundColor: '#7FC8A9',
+        borderBottomColor: 'floralwhite',
+        borderBottomWidth: 1,
+        justifyContent: 'center',
+        flex: 1,
+        height: 90,
+    },
+    rowFront1: {
         alignItems: 'flex-start',
         backgroundColor: '#5F7A61',
         borderBottomColor: 'floralwhite',
         borderBottomWidth: 1,
         justifyContent: 'center',
         flex: 1,
-        height: 80,
+        height: 90,
     },
     rowBack: {
         alignItems: 'center',
@@ -406,7 +469,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingLeft: 15,
-        height: 80,
+        height: 90,
     },
     backRightButton: {
         alignItems: 'center',
@@ -415,8 +478,8 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 0,
         width: 75,
-        height: 80,
-        backgroundColor: '#0F4C75',
+        height: 90,
+        backgroundColor: '#444941',
         right: 0
     },
     backLeftButton: {
@@ -426,7 +489,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 0,
         width: 75,
-        height: 80,
+        height: 90,
         backgroundColor: 'tomato',
         left: 0
     },
@@ -452,8 +515,14 @@ const styles = StyleSheet.create({
     },
     itemUsername: {
         color: "floralwhite",
-        fontSize: 20,
+        fontSize: 12,
         marginHorizontal: 15,
+    },
+    itemNameLogo: {
+        color: "floralwhite",
+        fontSize: 40,
+        textAlign: "center",
+
     },
     itemExpirationDate: {
         color: "floralwhite",
@@ -462,28 +531,35 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     searchInput: {
-        height: 50,
+        height: 60,
         backgroundColor: "floralwhite",
         padding: 15,
         color: "#5F7A61",
+        borderWidth: 5, 
+        borderColor: "#D5EEBB",
     },
     headerText: {
         color: "floralwhite",
-        textAlign: "center",
-        fontSize: 20,
-        marginBottom: 20,
+        fontSize: 25,
     },
     newItemButtonText: {
         color: "floralwhite",
         fontSize: 40,
     },
     headerView: {
-        backgroundColor: "#444941",
+        backgroundColor: "#5F7A61",
+        flexDirection: "row",
+    },
+    headerView1: {
+        backgroundColor: "#7FC8A9",
         flexDirection: "row",
     },
     newItemButton: {
         justifyContent: "center",
         alignItems: "center",
+        borderWidth: 5, 
+        borderColor: "#D5EEBB",
+        height: 60,
     },
     centeredView: {
         flex: 1,
@@ -538,6 +614,33 @@ const styles = StyleSheet.create({
         margin: 10,
         color: "#444941",
     },
+    mainHeaderView: {
+        flexDirection: "row",
+        // flex: 1,
+        justifyContent: "space-between",
+        alignContent: "center",
+        marginHorizontal: 10,
+        marginBottom: 10,
+    },
+    changeListButton: {
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#7FC8A9",
+        padding: 5,
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        shadowOpacity: 0.3,
+        shadowOffset: {width: -3, height: 5}
+        // borderRadius: "50%",
+    },
+    changeListButton1: {
+        backgroundColor: "#5F7A61"
+    },
+    headerTextView: {
+        justifyContent: "center",
+
+    }
 });
 
 export default Home;

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Image, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from './Home'
-import ShoppingList from './ShoppingList'
+import { AntDesign } from '@expo/vector-icons';
 import Profile from "./Profile"
 
 const Tab = createBottomTabNavigator();
@@ -22,7 +22,7 @@ const GrocyStack = () => {
             component={Profile}
             options={{
                 tabBarIcon: () => {
-                    return <Image style={styles.tabBarIcon} source={require("../assets/TabBar/profile.png")}></Image>
+                    return <AntDesign name="idcard" size={30} color="floralwhite" />
                 }
             }}>
         </Tab.Screen>
@@ -32,17 +32,7 @@ const GrocyStack = () => {
             options={{
                 title: "Home",
                 tabBarIcon: () => {
-                    return <Image style={styles.tabBarIcon} source={require("../assets/TabBar/homeIcon.png")}></Image>
-                }
-            }}>
-        </Tab.Screen>
-        <Tab.Screen 
-            name="Shopping List" 
-            component={ShoppingList}
-            options={{
-                title: "Shopping List",
-                tabBarIcon: () => {
-                    return <Image style={styles.tabBarIcon} source={require("../assets/TabBar/shopping-list.png")}></Image>
+                    return <AntDesign name="home" size={30} color="floralwhite" />
                 }
             }}>
         </Tab.Screen>
