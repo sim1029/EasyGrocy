@@ -3,7 +3,7 @@ from easygrocy import db
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
-    price = db.Column(db.Integer)
+    price = db.Column(db.Float)
     quantity = db.Column(db.Integer)
     expiration = db.Column(db.DateTime)
     purchased = db.Column(db.Integer, nullable=False)
