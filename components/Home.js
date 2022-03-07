@@ -16,12 +16,11 @@ import { FontAwesome } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import localData from "./localData";
-import useToken from "./useToken";
 import colors from "../Methods/colors";
 
 const Home = ({navigation}) => {
     const [listData, setListData] = useState(Array());
-    const [squad, setSquadName] = useState("");
+    const [squad, setSquad] = useState(null);
     const [filteredData, setFilteredData] = useState(Array());
     const [searchText, setSearchText] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
@@ -36,10 +35,9 @@ const Home = ({navigation}) => {
     const [token, setToken] = useState("");
     const [purchased, setPurchased] = useState(1);
     const [myColors, setColors] = useState(null);
+    const [localUserInfo, setLocalUserInfoHook] = useState(null);
     
-
-    const {getToken} = useToken();
-    const {getGroupId, getGroupName, getUserName} = localData();
+    const {getLocalGroupInfo, getLocalUserInfo, getToken} = localData();
     const {getColors} = colors();
 
     useEffect(async () => {
@@ -47,27 +45,23 @@ const Home = ({navigation}) => {
             setPurchased(1);
             const newColors = await getColors();
             setColors(newColors);
-            getItems(1, newColors);
-            getGroupName().then((name) => {
-                setSquadName(name);
+            getLocalUserInfo().then((userInfo) => {
+                setLocalUserInfoHook(userInfo);
+                setSquad(userInfo.active_squad);
+                setCurrUser(userInfo.name)
             })
-            const userName = await getUserName();
-            setCurrUser(userName);
+            getItems(1, newColors);
             const newToken = await getToken();
             setToken(newToken);
-            });
+        });
         return unsubscribe;
     }, [navigation]);
 
     const getItems = async (purchased, colors) => {
-        const newGroupId = await getGroupId();
-        setGroupId(newGroupId);
-        if (newGroupId) {
+        if (squad != null) {
             setGroupExists(true);
-            getToken().then((token) => {
-                fetch(`https://easygrocy.com/api/group/${newGroupId}/items`, {
-                headers: {'Authorization': 'Bearer ' + token}
-            })
+            fetch(`https://easygrocy.com/api/group/${squad.id}/items`, {
+            headers: {'Authorization': 'Bearer ' + token}
             .then((response) => {
                 if(!response.ok) throw new Error(response.status);
                 else return response.json();

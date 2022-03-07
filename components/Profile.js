@@ -6,7 +6,6 @@ import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import localData from "./localData";
-import useToken from "./useToken";
 
 import { 
     StyleSheet, 
@@ -29,18 +28,8 @@ const Profile = ({ navigation }) => {
     const [createModalVisible, setCreateModalVisible] = useState(false);
     const [changeModalVisible, setChangeModalVisible] = useState(false);
     const [joinModalVisible, setJoinModalVisible] = useState(false);
-    const { getToken, removeToken} = useToken();
 
-    const {
-      getGroupName, 
-      getUserName, 
-      removeUserId,
-      removeUserName, 
-      removeGroupName, 
-      removeGroupId, 
-      removeEmail, 
-      removePassword,
-    } = localData();
+    const { getLocalGroupInfo, removeLocalUserInfo, removeLocalGroupInfo, removeToken } = localData();
 
 
     // useEffect(() => {
@@ -54,12 +43,8 @@ const Profile = ({ navigation }) => {
 
     const clearLocalStorage = async () => {
       await removeToken();
-      await removeUserId();
-      await removeUserName();
-      await removeGroupName();
-      await removeGroupId();
-      await removePassword();
-      await removeEmail();
+      await removeLocalUserInfo()
+      await removeLocalGroupInfo();
     }
 
     const logoutUser = async () => {

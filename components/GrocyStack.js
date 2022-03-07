@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Image, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from './Home'
 import { AntDesign } from '@expo/vector-icons';
@@ -40,12 +39,5 @@ const GrocyStack = () => {
       </Tab.Navigator>
   )
 }
-
-const styles = StyleSheet.create({
-    tabBarIcon: {
-        width: 27,
-        height: 27,
-    }
-});
 
 export default GrocyStack;

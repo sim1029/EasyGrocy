@@ -1,18 +1,16 @@
 import localData from "../components/localData";
-import useToken from "../components/useToken";
 
-const { getGroupId } = localData();
-const {getToken} = useToken();
+const { getToken, getLocalUserInfo } = localData();
 
 const colors = () => {
 
     const colorArr = ["blueviolet", "chartreuse", "black", "darkblue", "darkorange", "deeppink", "forestgreen", "fuchsia", "gold", "lightblue", "lightcoral"];
 
     const getColors = async () => {
-        const groupId = await getGroupId();
+        const userInfo = await getLocalUserInfo();
         const token = await getToken();
         const collection = new Map();
-        const response = await fetch(`https://easygrocy.com/api/group/${groupId}/users`, {
+        const response = await fetch(`https://easygrocy.com/api/group/${userInfo.active_squad.id}/users`, {
             headers: {
                 'Authorization': 'Bearer ' + token,
                 Accept: 'application/json',

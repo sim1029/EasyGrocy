@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { 
   StyleSheet, 
   View, 
@@ -7,14 +7,12 @@ import {
   TouchableOpacity, 
   Text,
 } from "react-native";
-import useToken from "./useToken";
 import localData from "./localData";
 
-const Login = ({navigation}) => {
+const Login = ({ navigation }) => {
   const [email, setEmailHook] = useState("");
   const [password, setPasswordHook] = useState("");
-  const {setToken} = useToken();
-  const {setUserId, setUserName, setGroupId, setEmail, setPassword, getEmail, getPassword, getUserName} = localData();
+  const { setToken, getLocalUserInfo, setLocalUserInfo, setLocalGroupInfo } = localData();
   
   const loginUser = async () => {
     await fetch('https://easygrocy.com/api/auth/login', {
@@ -33,12 +31,16 @@ const Login = ({navigation}) => {
         else return response.json();
     })
     .then( async (json) => {
-      await setToken(json.access_token)
-      await setUserId("" + json.user_id)
-      await getUserGroups("" + json.user_id, json.access_token)
-      await setEmail(email)
-      await setPassword(password)
-      await getUserNameEndpoint("" + json.user_id, json.access_token)
+      await setToken(json.access_token);
+      console.log(json);
+      await getUserGroups("" + json.user_id, json.access_token);
+      const localUserInfo = {
+        id: json.user_id,
+        email: email,
+        password: password,
+      }
+      console.log(localUserInfo);
+      await getUserNameEndpoint("" + json.user_id, json.access_token, localUserInfo);
       navigation.navigate("GrocyStack");
     })
     .catch((error) => console.error(error));
@@ -55,14 +57,12 @@ const Login = ({navigation}) => {
     })
     .then(async (json) => {
         const groups = json.groups;
-        if (groups.length > 0) {
-          await setGroupId("" + groups[0].id);
-          await setGroupName(groups[0].name);
-        }
+        console.log("The Groups:", groups);
+        await setLocalGroupInfo(groups);
     })
   }
 
-  const getUserNameEndpoint = async (userId, token) => {
+  const getUserNameEndpoint = async (userId, token, localUserInfo) => {
     await fetch(`https://easygrocy.com/api/user/${userId}`, {
       method: "GET",
       headers: {'Authorization': 'Bearer ' + token}
@@ -72,7 +72,8 @@ const Login = ({navigation}) => {
       else return response.json();
     })
     .then(async (json) => {
-        await setUserName(json.user.name);
+        localUserInfo.name = json.user.name;
+        await setLocalUserInfo(localUserInfo);
     })
   }
 
