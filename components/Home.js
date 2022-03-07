@@ -90,11 +90,13 @@ const Home = ({navigation}) => {
                         }
                         let color = colors.get(usersString);
                         if (!color) color = "#444941";
+                        let price = parseFloat(items[i].price);
+                        let roundedPrice = price.toFixed(2);
                         let newItem = {
                             key: `${key}`, 
                             name: `${items[i].name}`, 
                             quantity: `${items[i].quantity}`, 
-                            price: `${items[i].price}`, 
+                            price: `${roundedPrice}`, 
                             usernames: `${usersString}`, 
                             expiration: `${expiration}`,
                             id: `${items[i].id}`,
@@ -153,31 +155,37 @@ const Home = ({navigation}) => {
         setListData(newData);
     }
 
-    const renderItem = data => (
-        <TouchableHighlight
-            onPress={() => console.log('You touched me')}
-            style={purchased ? styles.rowFront : styles.rowFront1}
-            underlayColor={'#D5EEBB'}
-        >
-            <View style={{flexDirection: "row", flex: 1, justifyContent: "flex-start", alignItems: "center"}}>
-                <View style={{flexDirection: "column", flex: 2, justifyContent: "center", alignItems: "center"}}>
-                    <View style={{width: 60, height: 60, borderRadius: 30, backgroundColor: data.item.color, justifyContent: "center", alignItems: "center"}}>
-                        <Text style={styles.itemNameLogo}>{data.item.usernames.substring(0,1)}</Text>
+    const renderItem = (data) => {
+        return (
+            <TouchableHighlight
+                onPress={() => console.log('You touched me')}
+                style={purchased ? styles.rowFront : styles.rowFront1}
+                underlayColor={'#D5EEBB'}
+            >
+                <View style={{flexDirection: "row", flex: 1, justifyContent: "flex-start", alignItems: "center"}}>
+                    <View style={{flexDirection: "column", flex: 2, justifyContent: "center", alignItems: "center"}}>
+                        <View style={{width: 60, height: 60, borderRadius: 30, backgroundColor: data.item.color, justifyContent: "center", alignItems: "center"}}>
+                            <Text style={styles.itemNameLogo}>{data.item.usernames.substring(0,1)}</Text>
+                        </View>
+                        <Text style={styles.itemUsername}>{data.item.usernames}</Text>
                     </View>
-                    <Text style={styles.itemUsername}>{data.item.usernames}</Text>
+                    <View style={{flexDirection: "column", flex: 4}}
+                    >
+                        <Text style={styles.itemName}>{data.item.name}</Text>
+                        <Text style={styles.itemExpirationDate}>{data.item.expiration !== "" ? "Best By: " + data.item.expiration : ""}</Text>
+                        <View style={{flexDirection: "row", justifyContent: "space-between"}}>
+                            <View style={{flexDirection: "row"}}>
+                                <Text style={[styles.itemPrice, styles.itemPriceDollarSign]}>{data.item.price !== "" ? "$" : ""}</Text><Text style={styles.itemPrice}>{data.item.price}</Text>
+                            </View>
+                            <View style={{flexDirection: "row"}}>
+                                <Text style={styles.itemQuantityPrefix}>{data.item.quantity !== "" ? "Qt: " : ""}</Text><Text style={styles.itemQuantity}>{data.item.quantity}</Text>
+                            </View>
+                        </View>
+                        
+                    </View>
                 </View>
-                <View style={{flexDirection: "column", flex: 2}}
-                >
-                    <Text style={styles.itemName}>{data.item.name}</Text>
-                    <Text style={styles.itemPrice}>${data.item.price}</Text>
-                </View>
-                <View style={{alignItems: "center", flex: 2}}>
-                    <Text style={styles.itemQuantity}>Qt: {data.item.quantity}</Text>
-                    <Text style={styles.itemExpirationDate}>{"Expiration Date: " + data.item.expiration}</Text>
-                </View>
-            </View>
-        </TouchableHighlight>
-    );
+            </TouchableHighlight>
+    );}
 
     let switchIcon
     if (purchased) {
@@ -231,10 +239,10 @@ const Home = ({navigation}) => {
 
     const addNewItem = async () => {
         const newData = [...listData];
+        let price = modalPrice.indexOf("$") === -1 ? modalPrice : modalPrice.substring(1); 
         let newItem = { 
-            key: `${listData.length}`, 
             name: `${modalName}`, 
-            price: `${modalPrice.substring(1)}`, 
+            price: `${price}`, 
             quantity: `${modalQuantity}`, 
             expiration: `${modalExpiration === "" ? "" : modalExpiration.toDateString().substring(4)}`, 
             usernames: `${currUser}`,
@@ -264,17 +272,20 @@ const Home = ({navigation}) => {
                     else usersString += users[i].name;
                 }
                 let expiration = "";
-                if (json.item.expiration) {
-                    expiration = json.item.expiration;
-                }
+                expiration = json.item.expiration;
+                let price = parseFloat(json.item.price);
+                let roundedPrice = price.toFixed(2);
+                let color = myColors.get(usersString);
+                if (!color) color = "#444941";
                 let updatedItem = {
                     key: `${newData.length}`, 
                     name: `${json.item.name}`, 
                     quantity: `${json.item.quantity}`, 
-                    price: `${json.item.price}`, 
+                    price: `${roundedPrice}`, 
                     usernames: `${usersString}`, 
                     expiration: `${expiration}`,
                     id: `${json.item.id}`,
+                    color: `${color}`
                 }
                 newData.push(updatedItem);
             }).catch((error) => console.error(error));
@@ -499,19 +510,22 @@ const styles = StyleSheet.create({
     itemQuantity: {
         color: "floralwhite",
         fontSize: 20,
-        marginHorizontal: 15,
+        marginRight: 15,
+    },
+    itemQuantityPrefix: {
+        color: "#444941",
+        fontSize: 20,
     },
     itemName: {
         color: "floralwhite",
         fontSize: 15,
-        marginHorizontal: 15,
-        textAlign: "center",
     },
     itemPrice: {
         color: "floralwhite",
         fontSize: 20,
-        marginHorizontal: 15,
-        textAlign: "center",
+    },
+    itemPriceDollarSign: {
+        color: "#444941"
     },
     itemUsername: {
         color: "floralwhite",
@@ -526,9 +540,7 @@ const styles = StyleSheet.create({
     },
     itemExpirationDate: {
         color: "floralwhite",
-        fontSize: 12,
-        marginHorizontal: 15,
-        textAlign: "center",
+        fontSize: 15,
     },
     searchInput: {
         height: 60,
