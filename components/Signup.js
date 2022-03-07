@@ -7,15 +7,13 @@ import {
   TouchableOpacity, 
   Text,
 } from "react-native";
-import useToken from "./useToken";
 import localData from "./localData";
 
-const Signup = ({navigation}) => {
+const Signup = ({ navigation }) => {
     const [email, setEmailHook] = useState("");
     const [password, setPasswordHook] = useState("");
     const [username, setUsername] = useState("");
-    const {setToken} = useToken();
-    const {setUserId, setUserName, setEmail, setPassword} = localData();
+    const { setLocalUserInfo, setToken } = localData();
 
     const signUpUser = async () => {
       await fetch('https://easygrocy.com/api/auth/register', {
@@ -36,10 +34,13 @@ const Signup = ({navigation}) => {
       })
       .then(async (json) => {
         await setToken(json.access_token)
-        await setUserName(username)
-        await setUserId("" + json.user_id)
-        await setEmail(email)
-        await setPassword(password)
+        const localUserInfo = {
+          id: json.user_id,
+          name: username,
+          email: email,
+          password: password,
+        }
+        await setLocalUserInfo(localUserInfo);
         navigation.navigate("GrocyStack");
       })
       .catch((error) => console.error(error))

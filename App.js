@@ -2,15 +2,13 @@ import React, { useEffect, useState, useCallback } from "react";
 import * as SplashScreen from 'expo-splash-screen';
 import Auth from './components/Auth';
 import Session from './components/Session';
-import useToken from './components/useToken';
 import localData from './components/localData';
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
 
-  const {setToken, getToken} = useToken();
-  const {getPassword, getEmail, setUserId} = localData();
+  const { getLocalUserInfo, setToken } = localData();
 
   useEffect(() => {
     async function prepare() {
@@ -26,14 +24,12 @@ export default function App() {
   }, []);
 
   const attemptLogin = async () => {
-    getEmail().then((emailRes) => {
-      getPassword().then((passwordRes) => {
-        if (emailRes != null && passwordRes != null) {
-          loginUser(emailRes, passwordRes);
-        } else {
-          setAppIsReady(true);
-        }
-      });
+    getLocalUserInfo().then((userInfo) => {
+      if (userInfo != null && userInfo.password != null){
+        loginUser(userInfo.email, userInfo.password);
+      } else {
+        setAppIsReady(true)
+      }
     }).catch((error) => {
       console.error(error);
       setAppIsReady(true);
@@ -58,10 +54,8 @@ export default function App() {
     })
     .then((json) => {
       setToken(json.access_token).then(async () => {
-        setUserId("" + json.user_id).then(async () => {
-          setUserLoggedIn(true);
-          setAppIsReady(true);
-        });
+        setUserLoggedIn(true);
+        setAppIsReady(true);
       });
     })
     .catch((error) => {
