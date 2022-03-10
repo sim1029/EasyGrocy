@@ -15,45 +15,209 @@ import {
     View, 
     SafeAreaView,
     Modal,
+    FlatList,
  } from 'react-native';
+
+ const staticGroupData = [
+   {
+     name: "simey_squad1",
+     code: "code1",
+     id: 0,
+   },
+   {
+      name: "simey_squad2",
+      code: "code2",
+      id: 1,
+    },
+    {
+      name: "simey_squad3",
+      code: "code3",
+      id: 2,
+    },
+    // {
+    //   group_name: "simey_squad4",
+    //   code: "code4",
+    //   id: 3,
+    // },
+    // {
+    //   group_name: "simey_squad5",
+    //   code: "code5",
+    //   id: 4,
+    // },
+    // {
+    //   group_name: "simey_squad6",
+    //   code: "code6",
+    //   id: 5,
+    // },
+    // {
+    //   group_name: "simey_squad7",
+    //   code: "code7",
+    //   id: 6,
+    // },
+    // {
+    //   group_name: "simey_squad8",
+    //   code: "code8",
+    //   id: 7,
+    // },
+    // {
+    //   group_name: "simey_squad9",
+    //   code: "code9",
+    //   id: 8,
+    // },
+    // {
+    //   group_name: "simey_squad10",
+    //   code: "code10",
+    //   id: 9,
+    // },
+ ]
 
 const Profile = ({ navigation }) => {
     const [squad, setSquad] = useState("");
     const [code, setCode] = useState("");
-    const [username, setUsernameHook] = useState("");
-    const [groupName, setGroupNameHook] = useState("");
     const [modalContent, setModalContent] = useState(null);
     const [newSquadName, setNewSquadName] = useState("");
     const [newSquadCode, setNewSquadCode] = useState("");
     const [createModalVisible, setCreateModalVisible] = useState(false);
     const [changeModalVisible, setChangeModalVisible] = useState(false);
     const [joinModalVisible, setJoinModalVisible] = useState(false);
+    const [localGroupInfo, setLocalGroupInfoHook] = useState(null);
+    const [localUserInfo, setLocalUserInfoHook] = useState(null);
+    const [token, setTokenHook] = useState(null);
+    const [renderFlatList, setRenderFlatList] = useState(false);
 
-    const { getLocalGroupInfo, removeLocalUserInfo, removeLocalGroupInfo, removeToken } = localData();
+    const { 
+      getLocalGroupInfo, 
+      getLocalUserInfo, 
+      removeLocalUserInfo, 
+      removeLocalGroupInfo, 
+      removeToken, 
+      getToken, 
+      setLocalUserInfo,
+      setLocalGroupInfo,
+    } = localData();
 
 
-    // useEffect(() => {
-    //   getUserName().then((id) => {
-    //     setUsernameHook(id)}
-    //   );
-    //   getGroupName().then((name) => {
-    //     setGroupNameHook(name)
-    //   });
-    // }, []);
+    useEffect(() => {
+      getLocalGroupInfo().then((groupInfo) => {
+        setLocalGroupInfoHook(groupInfo);
+      })
+      getLocalUserInfo().then((userInfo) => {
+        setLocalUserInfoHook(userInfo);
+      })
+      getToken().then((token) => {
+        setTokenHook(token);
+      })
+    }, []);
 
     const clearLocalStorage = async () => {
       await removeToken();
       await removeLocalUserInfo()
       await removeLocalGroupInfo();
+      console.log("removed");
     }
 
     const logoutUser = async () => {
+      console.log("about to remove")
       await clearLocalStorage();
       navigation.navigate("Login");
     }
 
     const createSquad = () => {
-        console.log("Created Squad");
+      fetch(`https://easygrocy.com/api/group/create_group`, {
+        method: "POST",
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: newSquadName
+        })
+      })
+      .then((response) => {
+        if(!response.ok) throw new Error(response.status)
+        else return response.json();
+      })
+      .then((json) => {
+        let groups = Array();
+        if (localGroupInfo != null) {
+          groups = localGroupInfo;
+        }
+        groups.push(json.group);
+        setLocalGroupInfoHook(groups);
+        setLocalGroupInfo(groups);
+        localUserInfo.active_group = json.group;
+        setLocalUserInfo(localUserInfo);
+        setLocalUserInfoHook(localUserInfo);
+      })
+    }
+
+    const joinSquad = (code) => {
+      fetch(`https://easygrocy.com/api/group/join_group/${code}`, {
+        method: "POST",
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((response) => {
+        if(!response.ok) throw new Error(response.status)
+        else return response.json();
+      })
+      .then((json) => {
+        let groups = Array();
+        if (localGroupInfo != null) {
+          groups = localGroupInfo;
+        }
+        groups.push(json.group);
+        setLocalGroupInfoHook(groups);
+        setLocalGroupInfo(groups);
+        localUserInfo.active_group = json.group;
+        setLocalUserInfo(localUserInfo);
+        setLocalUserInfoHook(localUserInfo);
+      })
+    }
+
+    const setNewActiveGroup = (data) => {
+      const newUserInfo = localUserInfo;
+      newUserInfo.active_group = data.item;
+      setLocalUserInfoHook(newUserInfo);
+      setLocalUserInfo(newUserInfo);
+      setRenderFlatList(!renderFlatList);
+      console.log(data.item);
+    }
+
+    const renderGroups = (data) => {
+      if (localUserInfo.active_group && localUserInfo.active_group.name == data.item.name) {
+        return (
+          <TouchableOpacity 
+            style={[styles.groupNameCell, {backgroundColor: "#5F7A61"}]} 
+            onPress={() => {
+              setNewActiveGroup(data);
+            }}
+          >
+            <Text style={{color: "floralwhite"}}>Active:</Text>
+            <Text style={[styles.groupNameCellText, {color: "floralwhite"}]}>
+              {data.item.name}
+            </Text>
+          </TouchableOpacity>
+        )
+      }
+      else {
+        return (
+          <TouchableOpacity 
+            style={styles.groupNameCell} 
+            onPress={() => {
+              setNewActiveGroup(data);
+            }}
+          >
+            <Text style={styles.groupNameCellText}>
+              {data.item.name}
+            </Text>
+          </TouchableOpacity>
+        );
+      }
     }
 
     return ( 
@@ -72,7 +236,7 @@ const Profile = ({ navigation }) => {
           <View style={[styles.rowView, {borderBottomWidth: 10}]}>
             <TouchableOpacity style={[styles.colView, {borderRightWidth: 10}]} onPress={() => setChangeModalVisible(true)}>
               <MaterialCommunityIcons name="account-switch-outline" size={60} color="floralwhite" />
-              <Text style={styles.buttonText}>Change Squad</Text>
+              <Text style={styles.buttonText}>Active Squad</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.colView} onPress={() => setJoinModalVisible(true)}>
               <AntDesign name="addusergroup" size={60} color="floralwhite" />
@@ -94,22 +258,33 @@ const Profile = ({ navigation }) => {
                       autoCapitalize='none'
                       autoCorrect={true}
                       onChangeText={(newSquadName) => {
-                          console.log(newSquadName);
                           setNewSquadName(newSquadName);
                       }}
                       value={newSquadName}
                       placeholder='New squad name'
                       placeholderTextColor="#5F7A61"
                   />
-                  <TouchableOpacity 
-                    style={styles.submitModalInputButton} 
-                    onPress={() => {
-                        setCreateModalVisible(false);
-                        createSquad(newSquadName);
-                    }}
-                  >
-                    <Text style={styles.submitModalInputButtonText}>Create Squad</Text>
-                  </TouchableOpacity>
+                  <View style={{flexDirection: "row"}}>
+                    <TouchableOpacity 
+                      style={styles.modalInputButton} 
+                      onPress={() => {
+                          setCreateModalVisible(false);
+                          setNewSquadName("");
+                      }}
+                    >
+                      <Text style={styles.modalInputButtonText}>Cancel</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                      style={styles.modalInputButton} 
+                      onPress={() => {
+                          setCreateModalVisible(false);
+                          createSquad(newSquadName);
+                          setNewSquadName("");
+                      }}
+                    >
+                      <Text style={styles.modalInputButtonText}>Create Squad</Text>
+                    </TouchableOpacity>
+                  </View>
               </View>
             </View>
           </Modal>
@@ -119,20 +294,27 @@ const Profile = ({ navigation }) => {
                 animationType="slide"
                 transparent={true}
                 visible={changeModalVisible}
-            >
-              <View style={styles.centeredView}>
+          >
+            <View style={styles.centeredView}>
+              <SafeAreaView>
                 <View style={styles.modalView}>
-                  <Text style={styles.modalHeaderText}>Change Active Squad</Text>
-                  <TouchableOpacity 
-                    style={styles.submitModalInputButton} 
-                    onPress={() => {
-                        setChangeModalVisible(false);
-                        // createSquad(newSquadName);
-                    }}
-                  >
-                    <Text style={styles.submitModalInputButtonText}>Close</Text>
-                  </TouchableOpacity>
-              </View>
+                    <Text style={styles.modalHeaderText}>Change Active Squad</Text>
+                    <FlatList
+                      renderItem={renderGroups}
+                      data={localGroupInfo}
+                      style={styles.groupNamesList}
+                      extraData={renderFlatList}
+                    />
+                    <TouchableOpacity 
+                      style={styles.modalInputButton} 
+                      onPress={() => {
+                          setChangeModalVisible(false);
+                      }}
+                    >
+                      <Text style={styles.modalInputButtonText}>Close</Text>
+                    </TouchableOpacity>
+                </View>
+              </SafeAreaView>
             </View>
           </Modal>
           
@@ -156,15 +338,27 @@ const Profile = ({ navigation }) => {
                       placeholder='Squad Code'
                       placeholderTextColor="#5F7A61"
                   />
-                  <TouchableOpacity 
-                    style={styles.submitModalInputButton} 
-                    onPress={() => {
-                        setJoinModalVisible(false);
-                        // createSquad(newSquadName);
-                    }}
-                  >
-                    <Text style={styles.submitModalInputButtonText}>Join Squad</Text>
-                  </TouchableOpacity>
+                  <View style={{flexDirection: "row"}}>
+                    <TouchableOpacity 
+                      style={styles.modalInputButton} 
+                      onPress={() => {
+                          setJoinModalVisible(false);
+                          setNewSquadCode("");
+                      }}
+                    >
+                      <Text style={styles.modalInputButtonText}>Cancel</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                      style={styles.modalInputButton} 
+                      onPress={() => {
+                          setJoinModalVisible(false);
+                          joinSquad(newSquadCode);
+                          setNewSquadCode("");
+                      }}
+                    >
+                      <Text style={styles.modalInputButtonText}>Join Squad</Text>
+                    </TouchableOpacity>
+                  </View>
               </View>
             </View>
           </Modal>
@@ -241,7 +435,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#D5EEBB",
     textAlign: "center",
     margin: 10,
-    width: 200,
+    width: 250,
     color: "#444941",
     padding: 10,
   },
@@ -251,18 +445,32 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
   },
-  submitModalInputButton: {
+  modalInputButton: {
     borderRadius: 15,
     marginTop: 20,
+    marginHorizontal: 10,
     backgroundColor: "#444941",
     justifyContent: "center",
     alignItems: "center",
+    width: 120,
     padding: 10,
-    width: 150,
   },
-  submitModalInputButtonText: {
+  modalInputButtonText: {
     color: "floralwhite",
     fontSize: 15,
+  },
+  groupNamesList: {
+    flexGrow: 0,
+  },
+  groupNameCell: {
+    backgroundColor: "#D5EEBB",
+    borderRadius: 10,
+    margin: 10,
+    padding: 20
+  },
+  groupNameCellText: {
+    fontSize: 30,
+    color: "#444941",
   },
   buttonText: {
     fontSize: 25,
