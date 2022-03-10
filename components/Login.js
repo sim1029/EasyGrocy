@@ -32,14 +32,14 @@ const Login = ({ navigation }) => {
     })
     .then( async (json) => {
       await setToken(json.access_token);
-      console.log(json);
+      // console.log(json);
       await getUserGroups("" + json.user_id, json.access_token);
       const localUserInfo = {
         id: json.user_id,
         email: email,
         password: password,
       }
-      console.log(localUserInfo);
+      // console.log(localUserInfo);
       await getUserNameEndpoint("" + json.user_id, json.access_token, localUserInfo);
       navigation.navigate("GrocyStack");
     })
@@ -57,7 +57,7 @@ const Login = ({ navigation }) => {
     })
     .then(async (json) => {
         const groups = json.groups;
-        console.log("The Groups:", groups);
+        // console.log("The Groups:", groups);
         await setLocalGroupInfo(groups);
     })
   }
