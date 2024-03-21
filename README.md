@@ -6,10 +6,6 @@
 
 R﻿eact Native application which tracks inventory of food for households to determine which items belong to each person and when they will reach their expiration date.
 
-## **Role**
-
-H﻿ad idea for project, coded front end, and coached beginner hackers on team.
-
 ## **Skills Utilized**
 
 * R﻿eact Native
@@ -19,7 +15,7 @@ H﻿ad idea for project, coded front end, and coached beginner hackers on team.
 
 ## **Contribution**
 
-I﻿ created the React Native shell for our project that communicated with our Flask API. Additionally, I coached a beginner hacker on our team and presented the final project to the judges at Steelhacks.
+Simon﻿ and Harry created the React Native shell for our project that communicated with our Flask API. Trevor and Maya deployed the Flask API. We all presented the final project to the judges at Steelhacks.
 
 ## **Outcome**
 
