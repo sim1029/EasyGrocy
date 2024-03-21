@@ -15,7 +15,7 @@ R﻿eact Native application which tracks inventory of food for households to det
 
 ## **Contribution**
 
-Simon﻿ and Harry created the React Native shell for our project that communicated with our Flask API. Trevor and Maya deployed the Flask API. We all presented the final project to the judges at Steelhacks.
+[Simon](https://github.com/sim1029)﻿ and [Harry](https://github.com/Harry-Schlechter) created the React Native shell for our project that communicated with our Flask API. [Trevor](https://github.com/tpetersen4) and [Maya](https://github.com/alidiusk) deployed the Flask API. We all presented the final project to the judges at Steelhacks.
 
 ## **Outcome**
 
